@@ -2,20 +2,42 @@
 \usepackage{graphicx} % Required for inserting images
 \usepackage[top=1.5cm]{geometry} % Adjust the top margin as needed
 
-\title{\textbf{DBMS Project Scope}}
-\author{Himang Chandra Garg, Nishil Agarwal, Prince Yadav, Tizil Sharma}
+\title{\textbf{Digital Konbini \\ An Online Retail Store Management System}}
+% {\textbf{}}
+\author{ Team : Himang Chandra Garg, Nishil Agarwal, Prince Yadav, Tizil Sharma}
 \date{January 2024}
 
 \begin{document}
 
 \maketitle
 
-\section{Objective:}
+\section{Scope}
 
-The project aims to develop an end-to-end (e2e) database application for an online retail store. The primary focus is crafting a robust back-end system that will intricately manage and optimize the interactions between various data entities. The design will encompass a meticulous selection of data entities, establishing relationships, and the imposition of constraints to ensure data integrity. This endeavor addresses common challenges like data redundancy and concurrent access issues and fortifying critical information security. Additionally, the application will be demonstrated through a user-friendly front-end interface.
-
+% \par The project aims to develop an bussiness-to-consumer (B2C) database application for an online retail store. The primary focus is crafting a robust back-end system that will efficiently manage and optimize the interactions between various data entities. The design will encompass a detailed selection of data entities, establishing relationships, and the imposition of constraints to ensure data integrity. This project addresses data duplication and concurrent access challenges while emphasizing the strong protection of crucial information. Additionally, the application will be demonstrated through a user-friendly front-end interface. \par Vendor
+\begin{flushleft}
+    \par The project aims to develop an bussiness-to-consumer (B2C) database application for an online retail store. The primary focus is crafting a robust back-end system that will efficiently manage and optimize the 
+    interactions between various data entities. The design will encompass a detailed selection of data entities, establishing relationships, and the imposition of constraints to ensure data integrity.
+    This project addresses data duplication and concurrent access challenges while emphasizing the strong protection of crucial information. Additionally, the application will be demonstrated through a user-friendly front-end interface. \\
+    \hspace*{1cm} 
+    \par The vendor is responsible for supplying the retail store with products and has the authority to manage product information. 
+    They can extend special offers for their products, and their contact details must be stored securely. 
+    The vendor also has the ability to monitor their product sales.
+    \hspace*{1cm} 
+    \par Customers are the main patrons of our store. 
+    They can log in to their accounts using the credentials they have set. 
+    Customers have the ability to add products to their shopping carts and remove items at their convenience by browsing various product available at the store. 
+    Additionally, they can review their recent orders and receive product suggestions based on their previous purchases. 
+    Access to customer care and support services is also available to them. \\
+    \hspace*{1cm} 
+    \par The admin serves as the supervisor of the retail store. 
+    The admin is responsible for informing vendors about products that are out of stock and for reviewing the details of the products provided by vendors to make informed decisions on purchases. 
+    They have the authority to manage and categories products to the database. 
+    Additionally, the admin can have access to the profit/loss data at any point of time. 
+    For enhanced security, their contact information is stored and utilized during the sign-in process.
+    
+\end{flushleft}
 \
-\section{We shall try to achieve the following:}
+\section{Objectives}
 \begin{itemize}
 \item Define data entities such as Customers, Products, Orders, and Vendors.
 
@@ -32,9 +54,42 @@ The project aims to develop an end-to-end (e2e) database application for an onli
 \item Track sales data, generate sales reports, and provide insights for decision-making.
 \end{itemize}
 \
-\section{Stakeholder functionalities:}
+\section{Stakeholder \& Functionalities:}
 \begin{itemize}
-\item \textbf{Customers:} Register, Browse products, Place orders, View order history, Add products to wish list.
-\item \textbf{Vendors:} Register, Manage product details, Track sales.
+\item \textbf{Customers} 
+\begin{itemize}
+    \item Register / Login
+    \item View Account Details
+    \item Browse Products
+    \item Place Orders
+    \item View Order history
+    \item Manage their cart
+    \item Access to Customer Support
 \end{itemize}
+\item \textbf{Vendors}
+\begin{itemize}
+    \item Register / Login
+    \item View Account Details
+    \item Allows Offers on the Products
+    \item Manage Product information
+    \item Track their product Sales
+\end{itemize}
+\item \textbf{Admin}
+\begin{itemize}
+    \item Access to data of Customers
+    \item Access to data of Vendors
+    \item Access to Sales of Products
+    \item Manage to Stock of Products
+    \item Apply Discount and Offers
+    \item Manage Customer Support
+    \item Add/Remove Products
+\end{itemize}
+\end{itemize}
+\section{Constraints on Stakeholders:}
+\begin{itemize}
+    \item \textbf{Customers} A Customer cannot change information of other user, products and vendor
+    \item \textbf{Vendors} A Vendor cannot access information of other Vendors and Customers
+    \item \textbf{Admin} Admin cannot change information of Customers, Vendors
+    \end{itemize}
+
 \end{document}
