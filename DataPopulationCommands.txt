@@ -1,4 +1,4 @@
-INSERT INTO Supplier (Supplier_ID, name, password, city, email, phone)
+INSERT INTO Supplier (Supplier_ID, name, password, address, email, mobile_number)
 VALUES
 (1, 'Dustin Bruce', 'SKA35NOH4QN', 'Guadalupe', 'velit.sed@hotmail.net', '6531553390'),
 (2, 'Cynthia Dodson', 'WIN35BGP3SJ', 'Ivanovo', 'vestibulum.accumsan@outlook.org', '8160608035'),
@@ -66,7 +66,7 @@ VALUES
 
 INSERT INTO Customer (Customer_ID, name, Mobile_number, password, address)
 VALUES
-(1, 'Xyla Clements', 9311743471, 'DBQ72UNB1KK', '1480 Adipiscing Street'),
+(1, 'Xyla Clements', 9311743471, 'DBQ72UNB1KK', '1480 adipiscing Street'),
 (2, 'Austin Mays', 8377235328, 'GQD38QLT2VG', 'P.O. Box 232, 9965 Iaculis, Avenue'),
 (3, 'Illana Owen', 9161180261, 'BEJ58FFH1BL', '606-1248 Nascetur Avenue'),
 (4, 'Yvonne Hutchinson', 6043934496, 'LMD97MQH3PM', '6835 Mauris Street'),
