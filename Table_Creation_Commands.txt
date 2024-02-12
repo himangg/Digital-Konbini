@@ -5,7 +5,7 @@ create table if not exists Product(Product_ID int auto_increment primary key, Su
 create table if not exists Customer(Customer_ID int auto_increment primary key, name Varchar(30) not null, Mobile_number int unique not null, password varchar(50) not null, address varchar(100));
 create table if not exists Orders(Order_ID int auto_increment primary key, Customer_ID int not null, Payment_Date date, Payment_PID int unique, Delivered_Date date, Coupon_Code_Applied varchar(10) , foreign key(Customer_ID) references Customer(Customer_ID));
 create table if not exists Product_Order_Bridge_Table(Order_ID int not null, Product_ID int not null, Quantity int, foreign key(Order_ID) references Orders(Order_ID), foreign key(Product_ID) references Product(Product_ID));
-create table if not exists Admins(Admin_ID int auto_increment primary key, name Varchar(30) not null, email varchar(25) unique not null, password varchar(50) not null);
+create table if not exists Admins(Admin_ID int auto_increment primary key, name Varchar(30) not null, email varchar(50) unique not null, password varchar(50) not null);
 create table if not exists Coupons(Code Varchar(10) unique not null, Admin_ID int not null, Flat_Discount int not null, Minimum_cart_value int not null,foreign key(Admin_ID) references Admins(Admin_ID));
 create table if not exists Wishlist_Customer_Product_Bridge_Table(Wishlist_ID int auto_increment primary key, Customer_ID int not null, Product_ID int, foreign key(Customer_ID) references Customer(Customer_ID), foreign key(Product_ID) references Product(Product_ID));
 create index product_category on product(category);
