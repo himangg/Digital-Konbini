@@ -1,0 +1,163 @@
+INSERT INTO Supplier (Supplier_ID, name, password, city, email, phone)
+VALUES
+(1, 'Dustin Bruce', 'SKA35NOH4QN', 'Guadalupe', 'velit.sed@hotmail.net', '6531553390'),
+(2, 'Cynthia Dodson', 'WIN35BGP3SJ', 'Ivanovo', 'vestibulum.accumsan@outlook.org', '8160608035'),
+(3, 'Dacey Ortega', 'MOP54RNI7FJ', 'Słupsk', 'tempor@yahoo.edu', '7406112644'),
+(4, 'Martha Butler', 'KEK76JIM3CF', 'Jilin', 'consectetuer.rhoncus@google.org', '6889355144'),
+(5, 'Joy Pearson', 'MGN31QZD2OI', 'Temuka', 'congue.in@protonmail.edu', '7957229667'),
+(6, 'Raya Herring', 'TBT37JVU6XJ', 'Marina East', 'accumsan.neque.et@protonmail.edu', '8870242570'),
+(7, 'Bevis Oliver', 'SBP38XQX3XI', 'Chandigarh', 'risus@icloud.ca', '7126658207'),
+(8, 'Sydnee Crane', 'FWP64USX1AK', 'Berlin', 'ac@outlook.com', '8308008395'),
+(9, 'Olga Wood', 'SJK58FLZ3SF', 'Sabadell', 'aenean.gravida.nunc@google.org', '8161627445'),
+(10, 'Lael Torres', 'DSO17KMU6FB', 'Nicoya', 'est@icloud.org', '8293095371'),
+(11, 'Cara Nixon', 'DKH24FIE9XE', 'Gols', 'lorem@hotmail.edu', '9465540300'),
+(12, 'Rooney Massey', 'TDH72JVD8PO', 'Campos dos Goytacazes', 'netus.et.malesuada@hotmail.ca', '7308256680'),
+(13, 'Dalton Velazquez', 'ONG22HZS8BM', 'Columbia', 'aliquam.ultrices@hotmail.com', '6787046306'),
+(14, 'Lucius Calderon', 'NDM94KMU1BE', 'Hénin-Beaumont', 'lobortis.quam.a@aol.net', '7239961711'),
+(15, 'Ursa Landry', 'TZO48MZU4WX', 'Umlazi', 'vitae@icloud.org', '6821407641'),
+(16, 'Rajah Perry', 'FSL31IXH8LG', 'Norman', 'commodo.tincidunt@yahoo.ca', '8481219145'),
+(17, 'Mia Chandler', 'YCL18LZY6UR', 'Colico', 'non.lacinia@yahoo.edu', '9770206144'),
+(18, 'Flynn Cortez', 'JWN85KHD3MU', 'Calama', 'fringilla.purus.mauris@outlook.ca', '9311972969'),
+(19, 'Wayne Meyer', 'BFD80FVC7NT', 'Kirkintilloch', 'sit.amet.consectetuer@aol.ca', '7234744753'),
+(20, 'Molly Gomez', 'GBC14URN8TV', 'Tarnów', 'duis.mi.enim@hotmail.org', '6380191096'),
+(21, 'Melodie Wilkinson', 'EUO11UAN2FV', 'Port Pirie', 'praesent.eu@outlook.net', '7278978837'),
+(22, 'Stacey Hampton', 'OQP32RLM8UD', 'Reus', 'dapibus@hotmail.ca', '8526977018'),
+(23, 'Hu Beck', 'BMK16XHO2SN', 'Morgex', 'felis.eget@outlook.couk', '7538909231'),
+(24, 'Aphrodite Burris', 'SUH17MPC0JN', 'Frederikstad', 'odio.phasellus@yahoo.couk', '6792335960'),
+(25, 'Hall Padilla', 'AUQ84FEW3TZ', 'Alto del Carmen', 'sed.pharetra@yahoo.net', '9479666022'),
+(26, 'Fitzgerald Fox', 'CJU70OJA0DT', 'Victorias', 'orci@google.couk', '9752413325'),
+(27, 'Darryl Saunders', 'BRU76OZG5ZI', 'Santiago', 'torquent@icloud.com', '7118028837'),
+(28, 'Robin Malone', 'YMH78TXN7FF', 'Greater Hobart', 'amet.ante@google.com', '7110451670'),
+(29, 'Fletcher Campbell', 'IMB37PKV3FV', 'Sluis', 'non.dapibus.rutrum@outlook.org', '6902660954'),
+(30, 'Nell Hoover', 'WSE68FCA6KY', 'Tortel', 'vivamus@aol.com', '6851964608'),
+(31, 'Brendan Page', 'JIN65FUK1CN', 'Larvik', 'ac.eleifend@yahoo.couk', '8765854713'),
+(32, 'Arsenio Leblanc', 'SLD17JRA3PP', 'Saarlouis', 'etiam.imperdiet@icloud.edu', '9093900326'),
+(33, 'Justin Cox', 'QSW04WSQ4PY', 'Kawerau', 'molestie@yahoo.net', '8888737589'),
+(34, 'Belle Wilkins', 'JSF35QXU1LI', 'Voronezh', 'habitant.morbi.tristique@outlook.ca', '8587239674'),
+(35, 'Larissa Sloan', 'PDU78UWA0WG', 'Heilongjiang', 'volutpat@hotmail.net', '7077521968'),
+(36, 'Roanna Kemp', 'NDO32QJI2QJ', 'Chuncheon', 'tempus@aol.couk', '8242479531'),
+(37, 'Nathaniel Berg', 'UNJ61OZC9XF', 'Calle Blancos', 'faucibus.orci@hotmail.edu', '8157238605'),
+(38, 'Anthony Vazquez', 'ZCQ56BKH6PR', 'Jeju', 'aliquam.fringilla@icloud.com', '8235313674'),
+(39, 'Cain Gaines', 'KKV25QNI2NW', 'Troyes', 'gravida.non@google.net', '8259257118'),
+(40, 'Stone Mcclure', 'TUH13TTX7NI', 'Serangoon', 'mauris@aol.ca', '7297326708'),
+(41, 'Chadwick Aguirre', 'IFY72VBO4DX', 'Memphis', 'aliquam.ornare.libero@google.net', '9587845396'),
+(42, 'Orson Jones', 'EJI83DSO0VV', 'Terme', 'non.cursus@aol.com', '9930340434'),
+(43, 'Hanae Rich', 'JHM62FVE9IF', 'Boon Lay', 'tincidunt@outlook.org', '6222332508'),
+(44, 'Darryl Wolfe', 'IHL83DTJ1RV', 'Widooie', 'a@icloud.com', '8536145374'),
+(45, 'Blythe Talley', 'ILJ24OEF6PP', 'Laon', 'fringilla.donec@icloud.org', '7591274637'),
+(46, 'Reagan Beach', 'QYR44WGC5LI', 'Donosti', 'velit.cras@icloud.edu', '8026893270'),
+(47, 'Kieran Curry', 'MKC71TJT6MD', 'Carson City', 'quis.massa.mauris@outlook.com', '6655614282'),
+(48, 'Oprah Knox', 'ILH46MVJ7BH', 'Puerto Nariño', 'dolor.sit@yahoo.couk', '7560093782'),
+(49, 'Colette Frye', 'KLA86QPW7UX', 'Hilversum', 'quis.massa@yahoo.com', '8546353774'),
+(50, 'Malcolm Manning', 'BSW65IQI7ZW', 'Tongeren', 'diam.nunc.ullamcorper@google.edu', '9551379268');
+
+INSERT INTO Product (Product_ID, Supplier_ID, name, category, price, details, Quantity_Remaining, discount_percentage)
+VALUES
+(1, 3, 'Lemon Balm - Fresh', 'Juice', 708, NULL, 5, 59),
+(2, 4, 'Nut - Chestnuts, Whole', 'Breakfast', 155, NULL, 10, 29),
+(3, 1, 'Beef - Roasted, Cooked', 'Meat', 722, NULL, 5, 74),
+(4, 14, 'Lamb - Racks, Frenched', 'Meat', 818, NULL, 6, 41),
+(5, 5, 'Laundry - Bag Cloth', 'Cloth', 225, NULL, 7, 7),
+(6, 7, 'Tray - 16in Rnd Blk', 'Stationary', 870, NULL, 10, 33),
+(7, 14, 'Chicken - Thigh, Bone In', 'Meat', 527, NULL, 2, 37),
+(8, 2, 'Buffalo - Tenderloin', 'Meat', 737, NULL, 9, 89),
+(9, 3, 'Ecolab - Lime - A - Way 4/4 L', 'Juice', 577, NULL, 9, 70),
+(10, 4, 'Kellogs Cereal In A Cup', 'Breakfast', 793, NULL, 3, 24);
+
+INSERT INTO Customer (Customer_ID, name, Mobile_number, password, address)
+VALUES
+(1, 'Xyla Clements', 9311743471, 'DBQ72UNB1KK', '1480 Adipiscing Street'),
+(2, 'Austin Mays', 8377235328, 'GQD38QLT2VG', 'P.O. Box 232, 9965 Iaculis, Avenue'),
+(3, 'Illana Owen', 9161180261, 'BEJ58FFH1BL', '606-1248 Nascetur Avenue'),
+(4, 'Yvonne Hutchinson', 6043934496, 'LMD97MQH3PM', '6835 Mauris Street'),
+(5, 'Karleigh Garza', 9891141030, 'EUK82TER7ER', '541-7411 Et Street'),
+(6, 'Lacy Manning', 8201703294, 'HWP33GOF6GH', '8814 Ac, St.'),
+(7, 'Penelope Roberson', 9705005931, 'OLC52IUR5ER', '296-1839 Tempor Rd.'),
+(8, 'Stone Peterson', 7184191782, 'XOL48MLJ0IL', 'Ap #738-6674 Duis St.'),
+(9, 'Erica Tyler', 9578430779, 'OSM95BJJ9KM', '699-8494 Gravida Avenue'),
+(10, 'Nathan Salinas', 6788654142, 'LNM71LPA3CE', '181-3020 Volutpat Road'),
+(11, 'Reece Mejia', 8966802319, 'CQP34WRK5KS', '103-7745 Lobortis Ave'),
+(12, 'Tad Wynn', 6623228387, 'GFI74IGC4GP', '508-1769 Sociosqu Road'),
+(13, 'Hannah Jefferson', 6599642151, 'EFT77NFB3HT', 'P.O. Box 331, 6298 Semper Av.'),
+(14, 'Zachery Vazquez', 8519902529, 'GAI37IUA2TW', 'P.O. Box 635, 4282 Maecenas Rd.'),
+(15, 'Maisie Martinez', 7843792888, 'DXP45QEU6BR', '475-124 Tortor Rd.'),
+(16, 'Fuller Cooke', 6550282934, 'NGI47KPV2DN', '3371 In, Av.'),
+(17, 'Gray Villarreal', 6829018772, 'MXA65KHL4PV', 'Ap #211-1886 Ornare, Avenue'),
+(18, 'Mariko Buck', 6958515248, 'WNF11IBX3PU', '381-2736 Feugiat Av.'),
+(19, 'Amy Dillon', 6445424119, 'CYR83CRS6WO', 'Ap #646-3932 Lorem, Avenue'),
+(20, 'Alan Welch', 9055314486, 'FFX38WED2QT', '898-2191 Aliquam Rd.'),
+(21, 'Kessie Gregory', 7129475875, 'RTH66YQF7WW', 'Ap #171-391 Interdum. St.'),
+(22, 'Violet Mason', 7843491551, 'LSI87CRI3YL', 'P.O. Box 115, 4130 Nec, Road'),
+(23, 'Shelley Herman', 6398424217, 'ACO29ALR4EO', '806-6954 Odio St.'),
+(24, 'Zephania Mcclure', 7886943378, 'STZ92SCH1WS', 'P.O. Box 543, 3660 Ultricies Av.'),
+(25, 'Xenos Burnett', 6770071180, 'KDI98GAU5VW', 'Ap #370-2463 Lorem, Road'),
+(26, 'Ora Giles', 6447236220, 'LGM02JNJ2TD', '9911 Netus Road'),
+(27, 'Drew Barrera', 8151938268, 'EQK65PYR2RI', '785-4372 Elit, Road'),
+(28, 'Dorian Freeman', 7265178095, 'BYG27GJI8LS', '5010 Per St.'),
+(29, 'Elijah Christian', 7806776842, 'TGG59YKN4JN', '3408 Blandit Ave'),
+(30, 'Jayme Fox', 6608582030, 'MMH27YBR3NP', '580-1968 Tincidunt Av.'),
+(31, 'Lance Allison', 7460077301, 'QTX89IGV2MI', 'Ap #488-6832 At, Avenue'),
+(32, 'Marah Cardenas', 9953714144, 'RFQ17WZD9YB', 'Ap #982-808 Vivamus St.'),
+(33, 'Brady Collins', 6173074565, 'SUU60PCE4ER', 'Ap #354-2792 Arcu. Av.'),
+(34, 'Lani Vazquez', 9657108836, 'BQY04MBY2KW', '219-3729 Proin Ave'),
+(35, 'Kevin Tucker', 9725074797, 'SYG68QLY5QU', 'P.O. Box 642, 1591 Ipsum. Rd.'),
+(36, 'Charles Newton', 7856049274, 'XSL97GIS3RA', 'Ap #999-8910 Nunc St.'),
+(37, 'Whilemina Meyers', 7188210883, 'JEH07IUY0AC', 'P.O. Box 186, 652 Est, Ave'),
+(38, 'Claudia Richmond', 7368162359, 'QWR57PMV9NT', '109-6731 Scelerisque St.'),
+(39, 'Xyla Barlow', 8893375223, 'JVT81DWR2UH', 'P.O. Box 875, 5579 Urna Avenue'),
+(40, 'Tatum Baker', 9753220615, 'NRZ53XMZ2GJ', '845-5983 Nullam Road'),
+(41, 'Carol Weeks', 7504325467, 'GBB62ERN9EJ', 'Ap #702-2559 Risus Avenue'),
+(42, 'Palmer Houston', 6572872022, 'UWC66HSX6XB', 'Ap #138-130 A, St.'),
+(43, 'Harding Walter', 9928402781, 'JFB16EEG9JB', 'Ap #376-2606 Quam Rd.'),
+(44, 'Harding Santana', 8906143856, 'DGV77NFH2RG', 'Ap #380-4865 Tellus Avenue'),
+(45, 'Karyn Wood', 7792571158, 'OFQ71PSR8IR', '779-8099 Diam. St.'),
+(46, 'Deacon Elliott', 6902492021, 'SGL42SJT9CB', 'P.O. Box 348, 7596 Risus. Rd.'),
+(47, 'Keith Everett', 7899074172, 'VEF48ONW4AE', '835-6339 Amet Ave'),
+(48, 'Indigo Herman', 7915095439, 'VML69UBO9OE', 'P.O. Box 280, 9182 Interdum Rd.'),
+(49, 'Sara Mercado', 8960520622, 'EPX74CAJ3IE', '400-5475 Scelerisque Rd.'),
+(50, 'Vera Gilbert', 9471241522, 'XBA97FFY6HQ', '3304 Lorem Avenue');
+
+INSERT INTO Orders (Order_ID, Customer_ID, Payment_Date, Payment_PID, Delivered_Date, Coupon_Code_Applied)
+VALUES
+(1, 3, '2023-11-29', 1, '2023-12-31', NULL),
+(2, 6, '2023-09-17', 2, '2024-02-09', NULL),
+(3, 2, '2023-05-13', 3, '2023-03-22', NULL);
+
+INSERT INTO Product_Order_Bridge_Table (Order_ID, Product_ID, Quantity)
+VALUES
+(1, 9, 5),
+(1, 5, 1),
+(1, 1, 1),
+(1, 4, 2),
+(1, 8, 4),
+(2, 2, 5),
+(2, 6, 6),
+(2, 1, 3),
+(2, 4, 2),
+(3, 5, 1),
+(3, 2, 1),
+(3, 9, 4),
+(3, 1, 2),
+(3, 7, 2);
+
+INSERT INTO Admins (Admin_ID, name, password, email)
+VALUES
+(1, 'Nichole Duncan', 'JCD85QPX3HU', 'lorem.lorem@icloud.net'),
+(2, 'Pamela Rosa', 'RAH16ZEO6MX', 'odio.etiam@hotmail.org'),
+(3, 'Hector Reed', 'XDE84FSY7IG', 'consectetuer@protonmail.edu'),
+(4, 'Marvin Burks', 'OKW36ZVT3SY', 'nam.interdum.enim@icloud.com'),
+(5, 'Mira Hogan', 'NGY74FEU5WJ', 'montes.nascetur@hotmail.ca'),
+(6, 'Emily Pickett', 'XLG46BXE4DV', 'facilisis.vitae@outlook.com'),
+(7, 'Georgia Gibbs', 'NEX82VIR8GF', 'eleifend.non@aol.couk'),
+(8, 'Shay Blackwell', 'FTO81SXY6QK', 'cursus.in@outlook.net'),
+(9, 'Oleg Rowland', 'XDC45RVB5RN', 'facilisi@icloud.ca'),
+(10, 'Judah Barr', 'KSI17BQW3WN', 'nec.ligula@aol.org');
+
+INSERT INTO Coupons (Code, Admin_ID, Flat_Discount, Minimum_cart_value)
+VALUES
+('FLAT500', 1, 500, 7000),
+('FLAT1000', 1, 1000, 11000);
+
+
+
+
