@@ -8,3 +8,5 @@ create table if not exists Product_Order_Bridge_Table(Order_ID int not null, Pro
 create table if not exists Admins(Admin_ID int auto_increment primary key, name Varchar(30) not null, email varchar(25) unique not null, password varchar(50) not null);
 create table if not exists Coupons(Code Varchar(10) unique not null, Admin_ID int not null, Flat_Discount int not null, Minimum_cart_value int not null,foreign key(Admin_ID) references Admins(Admin_ID));
 create table if not exists Wishlist_Customer_Product_Bridge_Table(Wishlist_ID int auto_increment primary key, Customer_ID int not null, Product_ID int, foreign key(Customer_ID) references Customer(Customer_ID), foreign key(Product_ID) references Product(Product_ID));
+create index product_category on product(category);
+create index order_ids on product_order_bridge_table(Order_ID);
