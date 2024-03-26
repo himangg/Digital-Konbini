@@ -19,6 +19,21 @@ def login_admin(admin_mail,password):
     except Exception as e:
         return e
 
+def register_customer(name,mobile_number,password,address):
+    connection.begin()
+    try:
+        cursor.execute("insert into customer(name,Mobile_number,password,address) values(%s,%s,%s,%s)",(name,mobile_number,password,address))
+    except Exception as e:
+        connection.rollback()
+        return e
+    
+def register_supplier(name,password,mobile_number,email=None,address=None):
+    connection.begin()
+    try:
+        cursor.execute("insert into supplier(name,password,mobile_number,email,address) values(%s,%s,%s,%s,%s)",(name,password,mobile_number,email,address))
+    except Exception as e:
+        connection.rollback()
+        return e
 
 def login_customer(customer_mobile,password):
     try:
