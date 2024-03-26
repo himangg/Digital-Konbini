@@ -294,6 +294,9 @@ def cart_price_to_be_payed(customer_id):
     except Exception as e:
         return e
 
+class Quantity_Error(Exception):
+    def __init__(self, message):
+        super().__init__(message)
 
 def cart_purchase(payment_pid,customer_id):
     connection.begin()
@@ -302,7 +305,16 @@ def cart_purchase(payment_pid,customer_id):
         cart_id,coupon_code=cursor.fetchone()
         cursor.execute("select quantity, product_id from product_order_bridge_table where order_id=%s",cart_id)
         values=cursor.fetchall()
+        ids=tuple([x[1] for x in values])
         cursor.executemany("update product set quantity_remaining=quantity_remaining-%s where product_id=%s",values)
+        cursor.execute("select quantity_remaining from product where product_id=%s",ids)
+        qty_rems=cursor.fetchall()
+        ids_insufficient=[]
+        for i in range(len(qty_rems)):
+            if qty_rems[i]<0:
+                ids_insufficient.append((ids[i],cart_id))
+        if len(ids_insufficient)!=0:
+            raise Quantity_Error("Quantity_Error")
         if coupon_code==None:
             cursor.execute("select sum(price*(100-discount_percentage)/100*quantity) from product p1, product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",cart_id)
         else:
@@ -310,7 +322,11 @@ def cart_purchase(payment_pid,customer_id):
         price=cursor.fetchone()[0]
         cursor.execute("update orders set payment_date=(select curdate();), payment_pid=%s, paid_amount=%s delivered_date=(select curdate();) where order_id=%s",(payment_pid,price,cart_id))
         connection.commit()
-    except Exception as e:
+    except Quantity_Error as f:
+        connection.rollback()
+        cursor.execute("delete from product_order_bridge_table where product_id=%s and order_id=%s",tuple(ids_insufficient))
+        return f
+    except Exception as e:        
         connection.rollback()
         return e
 
