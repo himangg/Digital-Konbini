@@ -1,6 +1,7 @@
 import pymysql as pm
 
 connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
+connection.autocommit=False
 cursor = connection.cursor()
 #--------------------------------------------------------------------------------------------
 
@@ -325,6 +326,7 @@ def cart_purchase(payment_pid,customer_id):
     except Quantity_Error as f:
         connection.rollback()
         cursor.execute("delete from product_order_bridge_table where product_id=%s and order_id=%s",tuple(ids_insufficient))
+        connection.commit()
         return f
     except Exception as e:        
         connection.rollback()
