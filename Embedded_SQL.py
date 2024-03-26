@@ -5,41 +5,50 @@ cursor = connection.cursor()
 #--------------------------------------------------------------------------------------------
 
 def login_admin(admin_mail,password):
-    cursor.execute("select email,password from admins where email='%s'",admin_mail)
-    x=cursor.fetchall()
-    if len(x)==0:
-        return "Mail incorrect"
-    else:
-        if x[0][1]==password:
-            return "Success"
+    try:
+        cursor.execute("select email,password from admins where email='%s'",admin_mail)
+        x=cursor.fetchall()
+        if len(x)==0:
+            return "Mail incorrect"
         else:
-            return "Incorrect Password"
+            if x[0][1]==password:
+                return "Success"
+            else:
+                return "Incorrect Password"
+    except Exception as e:
+        return e
 
 
 def login_customer(customer_mobile,password):
-    cursor.execute("select mobile_number,password from customer where mobile_number=%s",customer_mobile)
-    x=cursor.fetchall()
-    if len(x)==0:
-        return "Mobile incorrect"
-    else:
-        if x[0][1]==password:
-            return "Success"
+    try:
+        cursor.execute("select mobile_number,password from customer where mobile_number=%s",customer_mobile)
+        x=cursor.fetchall()
+        if len(x)==0:
+            return "Mobile incorrect"
         else:
-            return "Incorrect Password"
+            if x[0][1]==password:
+                return "Success"
+            else:
+                return "Incorrect Password"
+    except Exception as e:
+        return e
 
 def login_supplier(password,supplier_mail="",supplier_mobile=""):
-    if supplier_mail!="":
-        cursor.execute("select email,password from supplier where email=%s",supplier_mail)
-    else:
-        cursor.execute("select mobile_number,password from supplier where mobile_number=%s",supplier_mobile)
-    x=cursor.fetchall()
-    if len(x)==0:
-        return "Mail/Mobile incorrect"
-    else:
-        if x[0][1]==password:
-            return "Success"
+    try:
+        if supplier_mail!="":
+            cursor.execute("select email,password from supplier where email=%s",supplier_mail)
         else:
-            return "Incorrect Password"
+            cursor.execute("select mobile_number,password from supplier where mobile_number=%s",supplier_mobile)
+        x=cursor.fetchall()
+        if len(x)==0:
+            return "Mail/Mobile incorrect"
+        else:
+            if x[0][1]==password:
+                return "Success"
+            else:
+                return "Incorrect Password"
+    except Exception as e:
+        return e
 
 def profile_update_admin(admin_id,update_mail="",update_password=""):
     connection.begin()
@@ -86,12 +95,18 @@ def profile_update_supplier(supplier_id,update_mobile="",update_password="",upda
         return e
     
 def display_all_orders_summary_format():      #for admin
-    cursor.execute("select o.order_id, o.customer_id, o.Paid_Amount from orders o group by order_id")
-    return cursor.fetchall()
+    try:
+        cursor.execute("select o.order_id, o.customer_id, o.Paid_Amount from orders o group by order_id")
+        return cursor.fetchall()
+    except Exception as e:
+        return e
 
 def display_customer_past_orders(customer_id):
-    cursor.execute("select o.order_id, o.Paid_Amount ,delivered_date from orders o where o.customer_id=%s and delivered_date is not null order by delivered_date",customer_id)
-    return cursor.fetchall()
+    try:
+        cursor.execute("select o.order_id, o.Paid_Amount ,delivered_date from orders o where o.customer_id=%s and delivered_date is not null order by delivered_date",customer_id)
+        return cursor.fetchall()
+    except Exception as e:
+        return e
 
 def new_coupon(admin_id,flat_discount,min_cart_value,code):
     connection.begin()
@@ -145,14 +160,20 @@ def remove_product_from_cart(product_id,customer_id,quantity=0):
         return e
 
 def display_cart(customer_id):
-    cursor.execute("select order_id from orders where customer_id=%s and payment_date is null",customer_id)
-    cart_id=cursor.fetchone()[0]
-    cursor.execute("select name,category,quantity,price*(100-discount_percentage)/100*quantity 'Amount' from product p1,product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",cart_id)
-    return cursor.fetchall()
+    try:
+        cursor.execute("select order_id from orders where customer_id=%s and payment_date is null",customer_id)
+        cart_id=cursor.fetchone()[0]
+        cursor.execute("select name,category,quantity,price*(100-discount_percentage)/100*quantity 'Amount' from product p1,product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",cart_id)
+        return cursor.fetchall()
+    except Exception as e:
+        return e
 
 def show_supplier_inventory(supplier_id):
-    cursor.execute("select name,price*(100-discount_percentage)/100,quantity_remaining,discount_percentage from product where supplier_id=%s",supplier_id)
-    return cursor.fetchall()
+    try:
+        cursor.execute("select name,price*(100-discount_percentage)/100,quantity_remaining,discount_percentage from product where supplier_id=%s",supplier_id)
+        return cursor.fetchall()
+    except Exception as e:
+        return e
 
 def update_inventory_product(product_id,new_quantity="",new_price="",new_details="",new_discount_percent=""):
     connection.begin()
@@ -207,59 +228,71 @@ def remove_from_wishlist(customer_id,product_id):
         return e
     
 def supplier_selling_report(supplier_id):     #for supplier
-    cursor.execute("select p1.Name, sum(Quantity) 'Quantity Sold' from product p1,product_order_bridge_table p2 where p1.product_id=p2.product_id and supplier_id=%s group by p1.name",supplier_id)
-    return cursor.fetchall()
+    try:
+        cursor.execute("select p1.Name, sum(Quantity) 'Quantity Sold' from product p1,product_order_bridge_table p2 where p1.product_id=p2.product_id and supplier_id=%s group by p1.name",supplier_id)
+        return cursor.fetchall()
+    except Exception as e:
+        return e
 
 def supplier_selling_report():              #for admin
-    cursor.execute("select p1.supplier_id, s.Name, sum(Quantity) 'Products Quantity Sold' from supplier s,product p1,product_order_bridge_table p2 where p1.product_id=p2.product_id and p1.supplier_id = s.supplier_id group by supplier_id")
-    return cursor.fetchall()
+    try:
+        cursor.execute("select p1.supplier_id, s.Name, sum(Quantity) 'Products Quantity Sold' from supplier s,product p1,product_order_bridge_table p2 where p1.product_id=p2.product_id and p1.supplier_id = s.supplier_id group by supplier_id")
+        return cursor.fetchall()
+    except Exception as e:
+        return e
 
 def category_product_search(category="",name="",supp_name="",price_range_lower="",price_range_upper=""):
-    s1=set()
-    s2=set()
-    s3=set()
-    s4=set()
-    s5=set()
-    if category!="":
-        cursor.execute("select name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p, supplier s where category=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",category)
-        s1=set(cursor.fetchall())
-        if len(s1)==0:
-            return tuple()
-    if name!="":
-        cursor.execute("select name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p, supplier s where name=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",name)
-        s2=set(cursor.fetchall())
-        if len(s2)==0:
-            return tuple()
-    if supp_name!="":
-        cursor.execute("select name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p,supplier s where s.name=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",supp_name)
-        s3= set(cursor.fetchall())
-        if len(s3)==0:
-            return tuple()
-    if price_range_lower!="":
-        cursor.execute("select name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p,supplier s where price*(100-discount_percentage)/100>=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",price_range_lower)
-        s4= set(cursor.fetchall())
-        if len(s4)==0:
-            return tuple()
-    if price_range_upper!="":
-        cursor.execute("select name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p,supplier s where price*(100-discount_percentage)/100<=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",price_range_upper)
-        s5= set(cursor.fetchall())
-        if len(s5)==0:
-            return tuple()
+    try:
+        s1=set()
+        s2=set()
+        s3=set()
+        s4=set()
+        s5=set()
+        if category!="":
+            cursor.execute("select name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p, supplier s where category=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",category)
+            s1=set(cursor.fetchall())
+            if len(s1)==0:
+                return tuple()
+        if name!="":
+            cursor.execute("select name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p, supplier s where name=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",name)
+            s2=set(cursor.fetchall())
+            if len(s2)==0:
+                return tuple()
+        if supp_name!="":
+            cursor.execute("select name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p,supplier s where s.name=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",supp_name)
+            s3= set(cursor.fetchall())
+            if len(s3)==0:
+                return tuple()
+        if price_range_lower!="":
+            cursor.execute("select name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p,supplier s where price*(100-discount_percentage)/100>=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",price_range_lower)
+            s4= set(cursor.fetchall())
+            if len(s4)==0:
+                return tuple()
+        if price_range_upper!="":
+            cursor.execute("select name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p,supplier s where price*(100-discount_percentage)/100<=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",price_range_upper)
+            s5= set(cursor.fetchall())
+            if len(s5)==0:
+                return tuple()
 
-    non_empty_sets=[x for x in [s1,s2,s3,s4,s5] if len(x)!=0]
-    if len(non_empty_sets)==1:
-        return non_empty_sets[0]
-    else:
-        return tuple(non_empty_sets[0].intersection(*non_empty_sets[1:]))
+        non_empty_sets=[x for x in [s1,s2,s3,s4,s5] if len(x)!=0]
+        if len(non_empty_sets)==1:
+            return non_empty_sets[0]
+        else:
+            return tuple(non_empty_sets[0].intersection(*non_empty_sets[1:]))
+    except Exception as e:
+        return e
     
 def cart_price_to_be_payed(customer_id):
-    cursor.execute("select order_id,coupon_code_applied from orders where customer_id=%s and payment_date is null",customer_id)
-    cart_id,coupon_code=cursor.fetchone()
-    if coupon_code==None:
-        cursor.execute("select sum(price*(100-discount_percentage)/100*quantity) from product p1, product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",cart_id)
-    else:
-        cursor.execute("select sum(price*(100-discount_percentage)/100*quantity)-(select flat_discount from coupons where code=%s) from product p1, product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",(coupon_code,cart_id))
-    return cursor.fetchone()[0]
+    try:
+        cursor.execute("select order_id,coupon_code_applied from orders where customer_id=%s and payment_date is null",customer_id)
+        cart_id,coupon_code=cursor.fetchone()
+        if coupon_code==None:
+            cursor.execute("select sum(price*(100-discount_percentage)/100*quantity) from product p1, product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",cart_id)
+        else:
+            cursor.execute("select sum(price*(100-discount_percentage)/100*quantity)-(select flat_discount from coupons where code=%s) from product p1, product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",(coupon_code,cart_id))
+        return cursor.fetchone()[0]
+    except Exception as e:
+        return e
 
 
 def cart_purchase(payment_pid,customer_id):
