@@ -9,7 +9,6 @@ app = Flask(__name__)
 def index():
     return render_template('homepage.html')
 
-
 @app.route('/customer_login')
 def customer_login():
     return render_template('customer_login.html')
@@ -39,9 +38,9 @@ def register_customer():
         address = request.form['address']
         password = request.form['password']
         
-        result = backend.register_customer(name, phone, address, password)
+        result = backend.register_customer(name, phone, password, address)
         
-        if result == 'success':
+        if result == 'Cursor Clos':
             return redirect(url_for('registration_success'))  # Redirect to a success page
         else:
             return "Registration Failed"  # Render a page indicating login failure
@@ -58,7 +57,7 @@ def register_supplier():
         
         # Call your registration method from the backend
         # Replace 'register_supplier' with your actual registration method
-        result = backend.register_supplier(name, phone, address, email, password)
+        result = backend.register_supplier(name, password, phone, email, address)
         
         if result == 'success':
             return redirect(url_for('registration_success'))  # Redirect to a success page
@@ -77,10 +76,12 @@ def login_customer():
         # Replace 'login_customer' with your actual login method
         result = backend.login_customer(phone, password)
         
-        if result == 'success':
-            return redirect(url_for('customer_dashboard'))  # Redirect to customer dashboard
-        else:
-            return "Login Failed"  # Render a page indicating login failure
+        print(phone, password, result)
+        # return result
+        # if result == 'Success':
+        #     return redirect(url_for('customer_dashboard'))  # Redirect to customer dashboard
+        # else:
+        #     return "Login Failed"  # Render a page indicating login failure
 
 # Route to handle supplier login
 @app.route('/login_supplier', methods=['POST'])
@@ -204,7 +205,89 @@ def view_orders_summary():
     
     return render_template('view_orders_summary.html', orders_summary=orders_summary)
 
+@app.route('/view_products')
+def view_products():
+    products = [
+        {"id": 1, "name": "Product 1", "category": "Category A", "price": 10.99, "sale_price": 8.99},
+        {"id": 2, "name": "Product 2", "category": "Category B", "price": 15.99, "sale_price": 12.99},
+        {"id": 3, "name": "Product 3", "category": "Category A", "price": 20.99, "sale_price": 18.99}
+    ]
+    return render_template('view_products.html', products=products)
 
+@app.route('/add_to_cart')
+def view_cartproduct():
+    products = [
+        {"id": 1, "name": "Product 1", "category": "Category A", "price": 10.99, "sale_price": 8.99},
+        {"id": 2, "name": "Product 2", "category": "Category B", "price": 15.99, "sale_price": 12.99},
+        {"id": 3, "name": "Product 3", "category": "Category A", "price": 20.99, "sale_price": 18.99}
+    ]
+    return render_template('view_products.html', products=products)
+
+
+@app.route('/view_orders')
+def view_orders():
+    # Fetch orders from the database and pass them to the template
+    orders = [
+        {'name': 'Order 1', 'amount': '$50.00'},
+        {'name': 'Order 2', 'amount': '$100.00'},
+        {'name': 'Order 3', 'amount': '$75.00'}
+        # Add more orders fetched from the database
+    ]
+    return render_template('view_orders.html', orders=orders)
+
+@app.route('/view_cart')
+def view_cart():
+    # Hardcoded cart items data
+    cart_items = [
+        {'name': 'Product 1', 'category': 'Category A', 'quantity': 2, 'amount': 50},
+        {'name': 'Product 2', 'category': 'Category B', 'quantity': 1, 'amount': 30},
+        {'name': 'Product 3', 'category': 'Category C', 'quantity': 3, 'amount': 70}
+    ]
+    
+    return render_template('view_cart.html', cart_items=cart_items)
+
+
+@app.route('/checkout')
+def checkout():
+    cart_items = [
+        {'name': 'Item 1', 'price': 10.99},
+        {'name': 'Item 2', 'price': 20.50},
+        {'name': 'Item 3', 'price': 15.75}
+        # Add more cart items fetched from the database
+    ]
+    total_price = sum(item['price'] for item in cart_items)
+    return render_template('checkout.html', cart_items=cart_items, total_price=total_price)
+
+@app.route('/view_wishlist')
+def view_wishlist():
+    # Fetch wishlist items from the database and pass them to the template
+    wishlist_items = [
+        {'name': 'Wishlist Item 1', 'price': '$10.99'},
+        {'name': 'Wishlist Item 2', 'price': '$20.50'},
+        {'name': 'Wishlist Item 3', 'price': '$15.75'}
+        # Add more wishlist items fetched from the database
+    ]
+    return render_template('view_wishlist.html', wishlist_items=wishlist_items)
+
+@app.route('/update_customer_details', methods=['GET', 'POST'])
+def update_customer_details():
+    if request.method == 'POST':
+        # Retrieve form data
+        address = request.form['address']
+        mobile = request.form['mobile']
+        password = request.form['password']
+        
+        # Process form data (you can implement your logic here)
+        # For now, just print the values
+        print("Address:", address)
+        print("Mobile Number:", mobile)
+        print("Password:", password)
+        
+        # Redirect to a success page or render a confirmation message
+        return "Details updated successfully!"
+    else:
+        # Render the HTML template for updating customer details
+        return render_template('update_customer_details.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
