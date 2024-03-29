@@ -564,7 +564,7 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
             else:
                 cursor.execute("select sum(price*(100-discount_percentage)/100*quantity)-(select flat_discount from coupons where code=%s) from product p1, product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",(coupon_code,cart_id))
             price=cursor.fetchone()[0]
-            cursor.execute("update orders set payment_date=(select curdate();), payment_pid=%s, paid_amount=%s delivered_date=(select curdate();) where order_id=%s",(payment_pid,price,cart_id))
+            cursor.execute("update orders set payment_date=(select curdate()), payment_pid=%s, paid_amount=%s, delivered_date=(select curdate()) where order_id=%s",(payment_pid,price,cart_id))
             connection.commit()
             return "Success"
         except Exception as e:        
