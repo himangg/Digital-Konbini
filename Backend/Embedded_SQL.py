@@ -2,7 +2,7 @@ import pymysql as pm
 #--------------------------------------------------------------------------------------------
 
 def connectit():
-    connection = pm.connect(host="localhost", user="root", password="himang", database="digital_konbini")
+    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
     connection.autocommit=False
     return connection
 
@@ -553,31 +553,31 @@ def product_search(category="",name="",supp_name="",price_range_lower="",price_r
             s4=set()
             s5=set()
             if category!="":
-                cursor.execute("select name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p, supplier s where category=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",category)
+                cursor.execute("select p.name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p, supplier s where category like %s and p.supplier_id=s.supplier_id and quantity_remaining!=0",category+"%")
                 s1=set(cursor.fetchall())
                 if len(s1)==0:
                     connection.close()
                     return tuple()
             if name!="":
-                cursor.execute("select name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p, supplier s where name=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",name)
+                cursor.execute("select p.name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p, supplier s where p.name like %s and p.supplier_id=s.supplier_id and quantity_remaining!=0",name+"%")
                 s2=set(cursor.fetchall())
                 if len(s2)==0:
                     connection.close()
                     return tuple()
             if supp_name!="":
-                cursor.execute("select name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p,supplier s where s.name=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",supp_name)
+                cursor.execute("select p.name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p,supplier s where s.name like %s and p.supplier_id=s.supplier_id and quantity_remaining!=0",supp_name+"%")
                 s3= set(cursor.fetchall())
                 if len(s3)==0:
                     connection.close()
                     return tuple()
             if price_range_lower!="":
-                cursor.execute("select name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p,supplier s where price*(100-discount_percentage)/100>=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",price_range_lower)
+                cursor.execute("select p.name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p,supplier s where price*(100-discount_percentage)/100>=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",price_range_lower)
                 s4= set(cursor.fetchall())
                 if len(s4)==0:
                     connection.close()
                     return tuple()
             if price_range_upper!="":
-                cursor.execute("select name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p,supplier s where price*(100-discount_percentage)/100<=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",price_range_upper)
+                cursor.execute("select p.name,category,price,price*(100-discount_percentage)/100 'Sale Price',s.name 'supplier name',details,discount_percentage from product p,supplier s where price*(100-discount_percentage)/100<=%s and p.supplier_id=s.supplier_id and quantity_remaining!=0",price_range_upper)
                 s5= set(cursor.fetchall())
                 if len(s5)==0:
                     connection.close()
@@ -731,3 +731,4 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
 # print(login_customer(9471241522,"XBA97FFY6HQ"))
 # print(login_admin("lorem.lorem@icloud.net","JCD85QPX3HU"))
 # register_customer("Himang","1234567890","Himang","abc")
+# print(product_search(name="chicken"))
