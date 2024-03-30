@@ -1,6 +1,11 @@
 import pymysql as pm
 #--------------------------------------------------------------------------------------------
 
+def connectit():
+    connection = pm.connect(host="localhost", user="root", password="himang", database="digital_konbini")
+    connection.autocommit=False
+    return connection
+
 def login_admin(admin_mail,password):
     '''
     Returns 
@@ -9,8 +14,7 @@ def login_admin(admin_mail,password):
     'Incorrect Password' if incorrect password provided
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         try:
             cursor.execute("select email,password from admins where email=%s",admin_mail)
@@ -35,12 +39,12 @@ def register_customer(name,mobile_number,password,address):
     'Success' if correct details
     Else returns error string (can be sql error like attempt to enter duplicate mail)
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
             cursor.execute("insert into customer(name,Mobile_number,password,address) values(%s,%s,%s,%s)",(name,mobile_number,password,address))
+            connection.commit()
             connection.close()
             return "Success"
         except Exception as e:
@@ -54,12 +58,12 @@ def register_supplier(name,password,mobile_number,email=None,address=None):
     'Success' if correct details
     Else returns error string (can be sql error like attempt to enter duplicate msil)
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
             cursor.execute("insert into supplier(name,password,mobile_number,email,address) values(%s,%s,%s,%s,%s)",(name,password,mobile_number,email,address))
+            connection.commit()
             connection.close()
             return "Success"
         except Exception as e:
@@ -75,8 +79,7 @@ def login_customer(customer_mobile,password):
     'Incorrect Password' if incorrect password provided
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         try:
             cursor.execute("select mobile_number,password from customer where mobile_number=%s",customer_mobile)
@@ -103,8 +106,7 @@ def login_supplier(password,supplier_mail="",supplier_mobile=""):
     'Incorrect Password' if incorrect password provided
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         try:
             if supplier_mail!="":
@@ -132,8 +134,7 @@ def profile_update_admin(admin_id,update_mail="",update_password=""):
     'Success' if correct details
     Else returns error string (can be sql error like attempt to enter duplicate mail)
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
@@ -155,8 +156,7 @@ def profile_update_customer(customer_id,update_mobile="",update_address="",updat
     'Success' if correct details
     Else returns error string (can be sql error like attempt to enter duplicate mail)
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
@@ -180,8 +180,7 @@ def profile_update_supplier(supplier_id,update_mobile="",update_password="",upda
     'Success' if correct details
     Else returns error string (can be sql error like attempt to enter duplicate mail)
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
@@ -208,8 +207,7 @@ def display_all_orders_summary_format():      #for admin : Displays a summary of
     Returns (Order_ID,Customer_ID,Paid_Amount)
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         try:
             cursor.execute("select o.order_id, o.customer_id, o.Paid_Amount from orders o group by order_id")
@@ -224,8 +222,7 @@ def display_customer_past_orders(customer_id):
     Returns a list containing (Order_ID,Paid_Amount,Delivered_Date) pairs.
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         try:
             cursor.execute("select o.order_id, o.Paid_Amount ,delivered_date from orders o where o.customer_id=%s and delivered_date is not null order by delivered_date",customer_id)
@@ -241,8 +238,7 @@ def new_coupon(admin_id,flat_discount,min_cart_value,code):
     'Success' if correct
     Else returns error string (can be sql error like attempt to enter duplicate mail)
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
@@ -264,8 +260,7 @@ def delete_coupon(coupon_code):
     'Success' if correct
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
@@ -285,8 +280,7 @@ def add_product_to_cart(product_id,customer_id,quantity=1):
     -1 if product is not available in as much quantity as wanted
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
@@ -313,8 +307,7 @@ def remove_product_from_cart(product_id,customer_id,quantity=0):
     'Success' if correct
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
@@ -337,8 +330,7 @@ def display_cart(customer_id):           #Returns cart of a customer
     Returns a list containing (Product name, product category, quantity selected, total price) pairs.
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         try:
             cursor.execute("select order_id from orders where customer_id=%s and payment_date is null",customer_id)
@@ -355,8 +347,7 @@ def show_supplier_inventory(supplier_id):      #Returns all products and details
     Returns a list of (Product name, price per unit, quantity left in stock, discount percentage offered by supplier himself) pairs.
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         try:
             cursor.execute("select name,price*(100-discount_percentage)/100,quantity_remaining,discount_percentage from product where supplier_id=%s",supplier_id)
@@ -372,8 +363,7 @@ def update_inventory_product(product_id,new_quantity="",new_price="",new_details
     'Success' if correct
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
@@ -399,8 +389,7 @@ def delete_inventory_product(product_id):
     'Success' if correct
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
@@ -419,8 +408,7 @@ def new_inventory_product(supplier_id,name,category,price,quantity,details="",di
     'Success' if correct
     Else returns error string (can be sql error like attempt to enter duplicate mail)
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
@@ -439,8 +427,7 @@ def add_to_wishlist(customer_id,product_id):
     'Success' if correct
     Else returns error string (can be sql error like attempt to enter duplicate mail)
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
@@ -459,8 +446,7 @@ def remove_from_wishlist(customer_id,product_id):
     'Success' if correct
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
@@ -478,8 +464,7 @@ def supplier_selling_report(supplier_id):     #for supplier : Gives a summary of
     Returns a list of (Product name, quantity sold so far) pairs.
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         try:
             cursor.execute("select p1.Name, sum(Quantity) 'Quantity Sold' from product p1,product_order_bridge_table p2 where p1.product_id=p2.product_id and supplier_id=%s group by p1.name",supplier_id)
@@ -494,8 +479,7 @@ def supplier_selling_report():              #for admin : Gives a summary of all 
     Returns a list of (Supplier ID, Supplier Name, Total products sold by supplier so far) pairs.
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         try:
             cursor.execute("select p1.supplier_id, s.Name, sum(Quantity) 'Products Quantity Sold' from supplier s,product p1,product_order_bridge_table p2 where p1.product_id=p2.product_id and p1.supplier_id = s.supplier_id group by supplier_id")
@@ -512,8 +496,7 @@ def product_search(category="",name="",supp_name="",price_range_lower="",price_r
     Empty tuple : if no product matching criteria is in stock
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         try:
             s1=set()
@@ -568,8 +551,7 @@ def show_messages(supplier_id):             #To return all messages regarding pr
     Returns a list of (message id, product name, quantity left) pairs.
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         #Returns details of products whose quantity left is less than 10
         try:
@@ -587,8 +569,7 @@ def clear_message(message_id):        #To delete a specific message
     'Success' if correct
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
@@ -612,8 +593,7 @@ def cart_price_to_be_payed(customer_id):           #To fetch the total amount to
     'Quantity_Error' if insufficient quantities left to fulfill order (in this case redirect to cart page)
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
@@ -638,6 +618,7 @@ def cart_price_to_be_payed(customer_id):           #To fetch the total amount to
                 cursor.execute("select sum(price*(100-discount_percentage)/100*quantity) from product p1, product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",cart_id)
             else:
                 cursor.execute("select sum(price*(100-discount_percentage)/100*quantity)-(select flat_discount from coupons where code=%s) from product p1, product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",(coupon_code,cart_id))
+            connection.commit()
             connection.close()
             return cursor.fetchone()[0],values          #First value is total price. 2nd value is to be held.
             #In case customer cancels payment at this stage call cancel_cart_purchase and enter values as parameter
@@ -658,12 +639,12 @@ def cancel_cart_purchase(values):           #If user presses cancel button on pu
     'Success' if correct
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
             cursor.executemany("update product set quantity_remaining=quantity_remaining+%s where product_id=%s",values)
+            connection.commit()
             connection.close()
             return "Success"
         except Exception as e:
@@ -677,8 +658,7 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
     'Success' if correct
     Else returns error string
     '''
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
-    connection.autocommit=False
+    connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
@@ -702,3 +682,4 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
         
 # print(login_customer(9471241522,"XBA97FFY6HQ"))
 # print(login_admin("lorem.lorem@icloud.net","JCD85QPX3HU"))
+# register_customer("Himang","1234567890","Himang","abc")
