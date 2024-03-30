@@ -344,10 +344,16 @@ def add_product_to_cart(product_id,customer_id,quantity=1):
             qty_rem=cursor.fetchone()[0]
             cursor.execute("select * from product_order_bridge_table where order_id=%s and product_id=%s",(cart_id,product_id))
             result=cursor.fetchall()
-            old_quantity=result[2]
-            new_quantity=old_quantity+quantity
+            if len(result)!=0:
+                old_quantity=result[0][2]
+                new_quantity=old_quantity+quantity
+            else:
+                new_quantity=quantity
             if qty_rem>=new_quantity:
-                cursor.execute("insert into product_order_bridge_table values(%s,%s,%s)",(cart_id,product_id,new_quantity))
+                if new_quantity!=old_quantity:
+                    cursor.execute("update product_order_bridge_table set Quantity=%s where order_id=%s and product_id=%s",(new_quantity,cart_id,product_id))
+                else:
+                    cursor.execute("insert into product_order_bridge_table(Order_Id,Product_ID,Quantity) values(%s,%s,%s)",(cart_id,product_id,new_quantity))
             else:
                 connection.close()
                 return -1
@@ -741,4 +747,4 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
 # print(login_admin("lorem.lorem@icloud.net","JCD85QPX3HU"))
 # register_customer("Himang","1234567890","Himang","abc")
 # print(product_search(name="chicken"))
-# print(add_product_to_cart(4,2,1))
+print(add_product_to_cart(4,4,1))
