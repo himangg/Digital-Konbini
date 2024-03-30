@@ -201,6 +201,36 @@ def profile_update_supplier(supplier_id,update_mobile="",update_password="",upda
             connection.rollback()
             connection.close()
             return e
+
+def display_all_customers():            #for admin : Displays all customers
+    '''
+    Returns a list of (Customer ID, Name, Mobile Number, Address) pairs.
+    Else returns error string
+    '''
+    connection=connectit()
+    with connection.cursor() as cursor:
+        try:
+            cursor.execute("select customer_id,name,mobile_number,address from customer")
+            connection.close()
+            return cursor.fetchall()
+        except Exception as e:
+            connection.close()
+            return e
+        
+def display_all_suppliers():            #for admin : Displays all suppliers
+    '''
+    Returns a list of (Supplier ID, Name, Mobile Number, Email, Address) pairs.
+    Else returns error string
+    '''
+    connection=connectit()
+    with connection.cursor() as cursor:
+        try:
+            cursor.execute("select supplier_id,name,mobile_number,email,address from supplier")
+            connection.close()
+            return cursor.fetchall()
+        except Exception as e:
+            connection.close()
+            return e
     
 def display_all_orders_summary_format():      #for admin : Displays a summary of orders and the price paid for them
     '''
