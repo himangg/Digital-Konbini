@@ -321,7 +321,7 @@ def delete_coupon(coupon_code):
             connection.close()
             return e
 
-def add_product_to_cart(product_id,customer_id,quantity=1):
+def add_product_to_cart(product_id,customer_id,quantity=1): 
     '''
     Returns 
     'Success' if correct
@@ -342,8 +342,12 @@ def add_product_to_cart(product_id,customer_id,quantity=1):
                 cart_id=cursor.fetchone()[0]
             cursor.execute("select quantity_remaining from product where product_id=%s",product_id)
             qty_rem=cursor.fetchone()[0]
-            if qty_rem>=quantity:
-                cursor.execute("insert into product_order_bridge_table values(%s,%s,%s)",(cart_id,product_id,quantity))
+            cursor.execute("select * from product_order_bridge_table where order_id=%s and product_id=%s",(cart_id,product_id))
+            result=cursor.fetchall()
+            old_quantity=result[2]
+            new_quantity=old_quantity+quantity
+            if qty_rem>=new_quantity:
+                cursor.execute("insert into product_order_bridge_table values(%s,%s,%s)",(cart_id,product_id,new_quantity))
             else:
                 connection.close()
                 return -1
@@ -355,7 +359,7 @@ def add_product_to_cart(product_id,customer_id,quantity=1):
             connection.close()
             return e
 
-def remove_product_from_cart(product_id,customer_id,quantity=0):
+def remove_product_from_cart(product_id,customer_id):
     '''
     Returns 
     'Success' if correct
@@ -367,10 +371,7 @@ def remove_product_from_cart(product_id,customer_id,quantity=0):
         try:
             cursor.execute("select order_id from orders where customer_id=%s and payment_date is null",customer_id)
             cart_id=cursor.fetchone()[0]
-            if quantity==0:
-                cursor.execute("delete from product_order_bridge_table where product_id=%s",product_id)
-            else:
-                cursor.execute("update product_order_bridge_table set quantity=%s where order_id=%s and product_id=%s",(quantity,cart_id,product_id))
+            cursor.execute("delete from product_order_bridge_table where product_id=%s and order_id=%s",(product_id,cart_id))
             connection.commit()
             connection.close()
             return "Success"
