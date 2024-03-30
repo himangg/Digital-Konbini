@@ -2,14 +2,14 @@ import pymysql as pm
 #--------------------------------------------------------------------------------------------
 
 def connectit():
-    connection = pm.connect(host="localhost", user="root", password="himang", database="digital_konbini")
+    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
     connection.autocommit=False
     return connection
 
 def login_admin(admin_mail,password):
     '''
     Returns 
-    'Success' if correct details
+    'Success',admin_id if correct details
     'Mail incorrect' if incorrect mail provided
     'Incorrect Password' if incorrect password provided
     Else returns error string
@@ -74,7 +74,7 @@ def register_supplier(name,password,mobile_number,email=None,address=None):
 def login_customer(customer_mobile,password):
     '''
     Returns 
-    'Success' if correct details
+    'Success',customer_id if correct details
     'Mobile incorrect' if incorrect mail provided
     'Incorrect Password' if incorrect password provided
     Else returns error string
@@ -101,7 +101,7 @@ def login_customer(customer_mobile,password):
 def login_supplier(password,supplier_mail="",supplier_mobile=""):
     '''
     Returns 
-    'Success' if correct details
+    'Success',supplier_id if correct details
     'Mail/Mobile incorrect' if incorrect mail provided
     'Incorrect Password' if incorrect password provided
     Else returns error string
@@ -540,7 +540,7 @@ def supplier_selling_report():              #for admin : Gives a summary of all 
 def product_search(category="",name="",supp_name="",price_range_lower="",price_range_upper=""):
     '''
     Returns 
-    A list of (product name, product category, price, Discounted price, supplier name, product details, discount percentage in current sale) pairs.
+    A list of (product_id, product name, product category, price, Discounted price, supplier name, product details, discount percentage in current sale) pairs.
     Empty tuple : if no product matching criteria is in stock
     Else returns error string
     '''
