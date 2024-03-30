@@ -17,15 +17,15 @@ def login_admin(admin_mail,password):
     connection=connectit()
     with connection.cursor() as cursor:
         try:
-            cursor.execute("select email,password from admins where email=%s",admin_mail)
+            cursor.execute("select admin_id,email,password from admins where email=%s",admin_mail)
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
                 return "Mail incorrect"
             else:
-                if x[0][1]==password:
+                if x[0][2]==password:
                     connection.close()
-                    return "Success"
+                    return "Success",x[0][0]
                 else:
                     connection.close()
                     return "Incorrect Password"
@@ -82,15 +82,15 @@ def login_customer(customer_mobile,password):
     connection=connectit()
     with connection.cursor() as cursor:
         try:
-            cursor.execute("select mobile_number,password from customer where mobile_number=%s",customer_mobile)
+            cursor.execute("select customer_id,mobile_number,password from customer where mobile_number=%s",customer_mobile)
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
                 return "Mobile incorrect"
             else:
-                if x[0][1]==password:
+                if x[0][2]==password:
                     connection.close()
-                    return "Success"
+                    return "Success",x[0][0]
                 else:
                     connection.close()
                     return "Incorrect Password"
@@ -110,17 +110,17 @@ def login_supplier(password,supplier_mail="",supplier_mobile=""):
     with connection.cursor() as cursor:
         try:
             if supplier_mail!="":
-                cursor.execute("select email,password from supplier where email=%s",supplier_mail)
+                cursor.execute("select supplier_id,email,password from supplier where email=%s",supplier_mail)
             else:
-                cursor.execute("select mobile_number,password from supplier where mobile_number=%s",supplier_mobile)
+                cursor.execute("select supplier_id,mobile_number,password from supplier where mobile_number=%s",supplier_mobile)
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
                 return "Mail/Mobile incorrect"
             else:
-                if x[0][1]==password:
+                if x[0][2]==password:
                     connection.close()
-                    return "Success"
+                    return "Success",x[0][0]
                 else:
                     connection.close()
                     return "Incorrect Password"
