@@ -333,9 +333,11 @@ def add_product_to_cart(product_id,customer_id,quantity=1):
         connection.begin()
         try:
             cursor.execute("select order_id from orders where customer_id=%s and payment_date is null",customer_id)
-            cart_id=cursor.fetchone()[0]
-            if cart_id==None:
-                cursor.execute("insert into orders(Customer_ID) values (%s,%s)",customer_id)
+            result=cursor.fetchone()
+            if result!=None:
+                cart_id=result[0]
+            else:
+                cursor.execute("insert into orders(Customer_ID) values (%s)",customer_id)
                 cursor.execute("select order_id from orders where customer_id=%s and payment_date is null",customer_id)
                 cart_id=cursor.fetchone()[0]
             cursor.execute("select quantity_remaining from product where product_id=%s",product_id)
@@ -738,4 +740,4 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
 # print(login_admin("lorem.lorem@icloud.net","JCD85QPX3HU"))
 # register_customer("Himang","1234567890","Himang","abc")
 # print(product_search(name="chicken"))
-add_product_to_cart(4,2,1)
+print(add_product_to_cart(4,2,1))
