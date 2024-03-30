@@ -201,7 +201,7 @@ def profile_update_supplier(supplier_id,update_mobile="",update_password="",upda
             connection.rollback()
             connection.close()
             return e
-
+    
 def display_all_customers():            #for admin : Displays all customers
     '''
     Returns a list of (Customer ID, Name, Mobile Number, Address) pairs.
@@ -225,13 +225,31 @@ def display_all_suppliers():            #for admin : Displays all suppliers
     connection=connectit()
     with connection.cursor() as cursor:
         try:
-            cursor.execute("select supplier_id,name,mobile_number,email,address from supplier")
+            # select supplier_id,name,mobile_number,email,address from supplier and also products sold by him and their prices
+            sql_query = """
+            SELECT 
+                s.name AS Supplier_Name, 
+                s.mobile_number AS Supplier_Phone_Number, 
+                s.email AS Supplier_Email, 
+                s.address AS Supplier_Address, 
+                CONCAT('[', GROUP_CONCAT(CONCAT('{"name": "', p.name, '", "price": ', p.price, '}') ORDER BY p.name SEPARATOR ','), ']') AS Products
+            FROM 
+                Supplier s
+            LEFT JOIN 
+                Product p ON s.Supplier_ID = p.Supplier_ID
+            GROUP BY 
+                s.Supplier_ID
+            ORDER BY 
+                Supplier_Name;
+            """
+            # Execute the SQL query
+            cursor.execute(sql_query)
             connection.close()
             return cursor.fetchall()
         except Exception as e:
             connection.close()
             return e
-    
+        
 def display_all_orders_summary_format():      #for admin : Displays a summary of orders and the price paid for them
     '''
     Returns (Order_ID,Customer_ID,Paid_Amount)
@@ -240,7 +258,7 @@ def display_all_orders_summary_format():      #for admin : Displays a summary of
     connection=connectit()
     with connection.cursor() as cursor:
         try:
-            cursor.execute("select o.order_id, o.customer_id, o.Paid_Amount from orders o group by order_id")
+            cursor.execute("select o.order_id, o.customer_id from orders o group by order_id")
             connection.close()
             return cursor.fetchall()
         except Exception as e:
