@@ -2,7 +2,7 @@ import pymysql as pm
 #--------------------------------------------------------------------------------------------
 
 def connectit():
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
+    connection = pm.connect(host="localhost", user="root", password="himang", database="digital_konbini")
     connection.autocommit=False
     return connection
 
@@ -731,4 +731,3 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
 # print(login_customer(9471241522,"XBA97FFY6HQ"))
 # print(login_admin("lorem.lorem@icloud.net","JCD85QPX3HU"))
 # register_customer("Himang","1234567890","Himang","abc")
-# print(product_search(name="chicken"))
