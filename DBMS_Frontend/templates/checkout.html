@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .cart-items {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .total-price {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Add animation */
+        @keyframes buttonClick {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        button.clicked {
+            animation: buttonClick 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Checkout</h1>
+        <div class="cart-items">
+            {% for item in cart_items %}
+                <div class="item">{{ item.name }} - ${{ item.price }}</div>
+            {% endfor %}
+        </div>
+        <div class="total-price">
+            Total Price: ${{ total_price }}
+        </div>
+        <div class="buttons">
+            <button onclick="location.href='/view_cart'; this.classList.add('clicked')">Go Back</button>
+            <button onclick="location.href='/payment'; this.classList.add('clicked')">Confirm Checkout</button>
+        </div>
+
+</body>
+</html>

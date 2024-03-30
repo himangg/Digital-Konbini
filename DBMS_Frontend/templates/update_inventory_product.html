@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Inventory Product</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .form-container {
+            margin-top: 20px;
+        }
+
+        input[type="text"], input[type="password"] {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Update Inventory Product</h1>
+        <div class="form-container">
+            <form action="/update_inventory_product" method="post">
+                <label for="new_quantity">New Quantity:</label><br>
+                <input type="text" id="new_quantity" name="new_quantity"><br>
+                <label for="new_price">New Price:</label><br>
+                <input type="text" id="new_price" name="new_price"><br>
+                <label for="new_details">New Details:</label><br>
+                <textarea id="new_details" name="new_details" rows="4"></textarea><br>
+                <label for="new_discount_percent">New Discount Percentage:</label><br>
+                <input type="text" id="new_discount_percent" name="new_discount_percent"><br>
+                <button type="submit">Update Product</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
