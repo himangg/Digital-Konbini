@@ -1,9 +1,16 @@
 from flask import Flask, jsonify, render_template, request
+import json
 import embedded_sql as backend
 from flask import redirect
 from flask import url_for
 
 app = Flask(__name__)
+def parse_json(value):
+    return json.loads(value)
+
+app.jinja_env.filters['parse_json'] = parse_json
+
+current_user_id = 51
 
 @app.route('/')
 def index():
@@ -32,199 +39,160 @@ def admin_login():
 @app.route('/register_customer', methods=['POST'])
 def register_customer():
     if request.method == 'POST':
-        # Extract form data
         name = request.form['name']
         phone = request.form['phone']
         address = request.form['address']
         password = request.form['password']
-        
+        print(name, phone, address, password)
         result = backend.register_customer(name, phone, password, address)
         
-        if result == 'Cursor Clos':
-            return redirect(url_for('registration_success'))  # Redirect to a success page
+        if result == 'Success':
+            return render_template('customer_login.html')
         else:
-            return "Registration Failed"  # Render a page indicating login failure
+            return "Registration Failed"
 
 @app.route('/register_supplier', methods=['POST'])
 def register_supplier():
     if request.method == 'POST':
-        # Extract form data
         name = request.form['name']
         phone = request.form['phone']
         address = request.form['address']
         email = request.form['email']
         password = request.form['password']
-        
-        # Call your registration method from the backend
-        # Replace 'register_supplier' with your actual registration method
-        result = backend.register_supplier(name, password, phone, email, address)
-        
-        if result == 'success':
-            return redirect(url_for('registration_success'))  # Redirect to a success page
+        result = backend.register_supplier(name, password, phone,email, address)
+        if result == 'Success':
+            return render_template('supplier_login.html')
         else:
-            return "Registration Failed"  # Render a page indicating login failure
+            return "Registration Failed"
 
 # Route to handle customer login
 @app.route('/login_customer', methods=['POST'])
 def login_customer():
+    global current_user_id
     if request.method == 'POST':
-        # Extract form data
         phone = request.form['phone']
         password = request.form['password']
-        
-        # Call your login method from the backend
-        # Replace 'login_customer' with your actual login method
         result = backend.login_customer(phone, password)
-        
-        print(phone, password, result)
-        # return result
-        # if result == 'Success':
-        #     return redirect(url_for('customer_dashboard'))  # Redirect to customer dashboard
-        # else:
-        #     return "Login Failed"  # Render a page indicating login failure
+        # print(password)
+        if result[0] == 'Success':
+            current_user_id = result[1]
+            return render_template('customer_home.html') 
+        else:
+            return result
 
-# Route to handle supplier login
 @app.route('/login_supplier', methods=['POST'])
 def login_supplier():
+    global current_user_id
     if request.method == 'POST':
-        # Extract form data
-        email = request.form['email']
+        phoneORemail = request.form['phoneORemail']
         password = request.form['password']
         
-        # Call your login method from the backend
-        # Replace 'login_supplier' with your actual login method
-        result = backend.login_supplier(email, password)
-        
-        if result == 'success':
-            return redirect(url_for('supplier_dashboard'))  # Redirect to supplier dashboard
+        if(phoneORemail.find('@') == -1):
+            result = backend.login_supplier(password,supplier_mobile=phoneORemail)
         else:
-            return "Login Failed"  # Render a page indicating login failure
+            result = backend.login_supplier(phoneORemail,supplier_mail=phoneORemail)
+        if result[0] == 'Success':
+            current_user_id=result[1]
+            return render_template('supplier_home.html')
+        else:
+            return "Login Failed" 
 
-# Route to handle admin login
 @app.route('/login_admin', methods=['POST'])
 def login_admin():
+    global current_user_id
     if request.method == 'POST':
-        # Extract form data
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
-        
-        # Call your login method from the backend
-        # Replace 'login_admin' with your actual login method
-        result = backend.login_admin(username, password)
-        
-        if result == 'success':
-            return redirect(url_for('admin_dashboard'))  # Redirect to admin dashboard
+        result = backend.login_admin(email, password)
+        if result[0] == 'Success':
+            current_user_id = result[1]
+            return render_template('admin_home.html')
         else:
-            return "Login Failed"  # Render a page indicating login failure
+            return "Login Failed"
 
-@app.route('/update_details', methods=['GET', 'POST'])
-def update_details():
+@app.route('/update_admin_details', methods=['GET', 'POST'])
+def update_admin_details():
     if request.method == 'POST':
         new_email = request.form['email']
         new_password = request.form['password']
         
-        # update_admin_details(new_email, new_password)
-        # cursor.execute('''UPDATE Admins SET email = ?, password = ? WHERE Admin_ID = 1''', (new_email, new_password))
-        # conn.commit()
-
-        # print(new_email,new_password)
-        # Add code here to update admin's details in the database
-        return "Details updated successfully!"  # You can redirect or render a success page
-    return render_template('update_details.html')
-
+        result=backend.profile_update_admin(current_user_id,new_email, new_password)
+        # print(current_user_id)
+        # print(result)
+        if result == 'Success':
+            return "Details updated successfully!"
+        else:
+            return "Update Failed"
+    return render_template('update_admin_details.html')
 
 
 @app.route('/view_customers')
 def view_customers():
-    # Hardcoded customer data
-    customers = [
-        {
-            'name': 'John Doe',
-            'mobile_number': '1234567890',
-            'email': 'john@example.com',
-            'address': '123 Main St, City'
-        },
-        {
-            'name': 'Jane Smith',
-            'mobile_number': '9876543210',
-            'email': 'jane@example.com',
-            'address': '456 Elm St, Town'
-        }
-    ]
-    
-    return render_template('view_customers.html', customers=customers)
+    result=backend.display_all_customers()
+    return render_template('view_customers.html', customers=result)
 
 @app.route('/view_suppliers')
 def view_suppliers():
-    # Hardcoded supplier data
-    suppliers = [
-        {
-            'name': 'Supplier 1',
-            'email': 'supplier1@example.com',
-            'mobile_number': '1234567890',
-            'address': '123 Supplier St, City',
-            'products': [
-                {'name': 'Product A', 'price': '$10'},
-                {'name': 'Product B', 'price': '$15'}
-            ]
-        },
-        {
-            'name': 'Supplier 2',
-            'email': 'supplier2@example.com',
-            'mobile_number': '9876543210',
-            'address': '456 Supplier Ave, Town',
-            'products': [
-                {'name': 'Product X', 'price': '$20'},
-                {'name': 'Product Y', 'price': '$25'}
-            ]
-        }
-    ]
-    
-    return render_template('view_suppliers.html', suppliers=suppliers)
+    result=backend.display_all_suppliers()
+    return render_template('view_suppliers.html', suppliers=result)
 
 
 @app.route('/selling_report')
 def selling_report():
     # Hardcoded selling report data
+    result=backend.supplier_selling_report()
+    print(result)
     selling_report = [
         {'supplier_id': 1, 'supplier_name': 'Supplier 1', 'product_name': 'Product A', 'quantity_sold': 100},
         {'supplier_id': 2, 'supplier_name': 'Supplier 2', 'product_name': 'Product B', 'quantity_sold': 150},
         {'supplier_id': 3, 'supplier_name': 'Supplier 3', 'product_name': 'Product C', 'quantity_sold': 200}
     ]
     
-    return render_template('selling_report.html', selling_report=selling_report)
+    return render_template('selling_report.html', selling_report=result)
 
 @app.route('/view_orders_summary')
 def view_orders_summary():
-    # Hardcoded orders summary data
-    orders_summary = [
-        {'order_id': 1, 'customer_name': 'Customer 1', 'total_amount_paid': 100},
-        {'order_id': 2, 'customer_name': 'Customer 2', 'total_amount_paid': 150},
-        {'order_id': 3, 'customer_name': 'Customer 3', 'total_amount_paid': 200}
-    ]
-    
-    return render_template('view_orders_summary.html', orders_summary=orders_summary)
+    result=backend.display_all_orders_summary_format()
+    print(result)
+    return render_template('view_orders_summary.html', orders_summary=result)
 
 @app.route('/view_products')
 def view_products():
-    products = [
-        {"id": 1, "name": "Product 1", "category": "Category A", "price": 10.99, "sale_price": 8.99},
-        {"id": 2, "name": "Product 2", "category": "Category B", "price": 15.99, "sale_price": 12.99},
-        {"id": 3, "name": "Product 3", "category": "Category A", "price": 20.99, "sale_price": 18.99}
-    ]
-    return render_template('view_products.html', products=products)
+    result=backend.product_search()
+    # print(result)
+    return render_template('view_products.html', products=result)
 
-@app.route('/add_to_cart')
-def view_cartproduct():
-    products = [
-        {"id": 1, "name": "Product 1", "category": "Category A", "price": 10.99, "sale_price": 8.99},
-        {"id": 2, "name": "Product 2", "category": "Category B", "price": 15.99, "sale_price": 12.99},
-        {"id": 3, "name": "Product 3", "category": "Category A", "price": 20.99, "sale_price": 18.99}
-    ]
-    return render_template('view_products.html', products=products)
+@app.route('/add_to_cart', methods=['POST'])
+def add_to_cart():
+    print("add to cart")
+    if request.method == 'POST':
+        product_id = request.form['product_id']
+        quantity = int(request.form['quantity'])
+        print(product_id)
+        print(quantity)
+        print(current_user_id)
+        # product_id = 1
+        # if(quantity == ''): quantity = 1
+        result=backend.add_product_to_cart(product_id,current_user_id,quantity=quantity)
+        print(result)
+        if(result == -1):
+            return "Product quantity not available in stock!"
+        else:
+            return "Product added to cart successfully!"
+
+# @app.route('/view_cartproduct')
+# def view_cartproduct():
+#     result=backend.display_cart(current_user_id)
+#     print(result)
+#     products = [
+#         {"id": 1, "name": "Product 1", "category": "Category A", "price": 10.99, "sale_price": 8.99},
+#         {"id": 2, "name": "Product 2", "category": "Category B", "price": 15.99, "sale_price": 12.99},
+#         {"id": 3, "name": "Product 3", "category": "Category A", "price": 20.99, "sale_price": 18.99}
+#     ]
+#     return render_template('view_cart.html', products=products)
 
 
-@app.route('/view_orders')
+@app.route('/view_past_orders')
 def view_orders():
     # Fetch orders from the database and pass them to the template
     orders = [
@@ -238,14 +206,23 @@ def view_orders():
 @app.route('/view_cart')
 def view_cart():
     # Hardcoded cart items data
-    cart_items = [
-        {'name': 'Product 1', 'category': 'Category A', 'quantity': 2, 'amount': 50},
-        {'name': 'Product 2', 'category': 'Category B', 'quantity': 1, 'amount': 30},
-        {'name': 'Product 3', 'category': 'Category C', 'quantity': 3, 'amount': 70}
-    ]
-    
-    return render_template('view_cart.html', cart_items=cart_items)
+    result=backend.display_cart(current_user_id)
+    print(result)
+    # cart_items = [
+    #     {'name': 'Product 1', 'category': 'Category A', 'quantity': 2, 'amount': 50},
+    #     {'name': 'Product 2', 'category': 'Category B', 'quantity': 1, 'amount': 30},
+    #     {'name': 'Product 3', 'category': 'Category C', 'quantity': 3, 'amount': 70}
+    # ]
+    return render_template('view_cart.html', cart_items=result)
 
+@app.route('/remove_from_cart', methods=['POST'])
+def remove_from_cart():
+    if request.method == 'POST':
+        print("remove from cart")
+        product_id = request.form['product_id']
+        result=backend.remove_product_from_cart(product_id,current_user_id)
+        print(result)
+        return "Product removed from cart successfully!"
 
 @app.route('/checkout')
 def checkout():
@@ -272,22 +249,156 @@ def view_wishlist():
 @app.route('/update_customer_details', methods=['GET', 'POST'])
 def update_customer_details():
     if request.method == 'POST':
-        # Retrieve form data
         address = request.form['address']
         mobile = request.form['mobile']
         password = request.form['password']
         
-        # Process form data (you can implement your logic here)
-        # For now, just print the values
-        print("Address:", address)
-        print("Mobile Number:", mobile)
-        print("Password:", password)
-        
-        # Redirect to a success page or render a confirmation message
-        return "Details updated successfully!"
-    else:
-        # Render the HTML template for updating customer details
-        return render_template('update_customer_details.html')
+        result=backend.profile_update_customer(current_user_id,mobile,address,password)
+        print(current_user_id)
+        # print(result)
+        if result == 'Success':
+            return "Details updated successfully!"
+        else:
+            return "Update Failed"
+    return render_template('update_customer_details.html')
 
+    # if request.method == 'POST':
+    #     # Retrieve form data
+    #     address = request.form['address']
+    #     mobile = request.form['mobile']
+    #     password = request.form['password']
+        
+    #     res
+    #     # Process form data (you can implement your logic here)
+    #     # For now, just print the values
+    #     print("Address:", address)
+    #     print("Mobile Number:", mobile)
+    #     print("Password:", password)
+        
+    #     # Redirect to a success page or render a confirmation message
+    #     return "Details updated successfully!"
+    # else:
+    #     # Render the HTML template for updating customer details
+    #     return render_template('update_customer_details.html')
+
+@app.route('/supplier_update_details', methods=['GET', 'POST'])  
+def supplier_update_details():
+    if request.method == 'POST':
+        new_mobile = request.form['mobile']
+        new_address = request.form['address']
+        new_email = request.form['email']
+        new_password = request.form['password']
+        # Add code here to update supplier's details in the database
+        return "Details updated successfully!"  
+    return render_template('supplier_update_details.html')
+
+@app.route('/supplier_selling_report')
+def supplier_selling_report():
+    # Hardcoded sample data
+    products = [
+        {"name": "Product A", "quantity_sold": 50},
+        {"name": "Product B", "quantity_sold": 30},
+        {"name": "Product C", "quantity_sold": 20},
+        {"name": "Product D", "quantity_sold": 10}
+    ]
+    return render_template('supplier_selling_report.html', products=products)
+
+@app.route('/check_alerts')
+def check_alerts():
+    # Hardcoded sample data
+    alerts = [
+        {"message_id": 1, "product_name": "Product A", "price": 10.99, "quantity_remaining": 20},
+        {"message_id": 2, "product_name": "Product B", "price": 15.49, "quantity_remaining": 15},
+        {"message_id": 3, "product_name": "Product C", "price": 22.99, "quantity_remaining": 10},
+        {"message_id": 4, "product_name": "Product D", "price": 18.79, "quantity_remaining": 5}
+    ]
+    return render_template('check_alerts.html', alerts=alerts)
+
+# Route for clearing the message
+@app.route('/clear_message/<int:message_id>', methods=['POST'])
+def clear_message(message_id):
+    # Logic to clear the message
+    # This could involve updating the database or any other operation
+    # For example:
+    # clear_message_from_database(message_id)
+    
+    # After clearing the message, redirect back to the same page
+    return redirect('/check_alerts')
+
+
+
+# Route to view inventory products
+@app.route('/view_inventory')
+def view_inventory():
+    # Hardcoded sample data for inventory products
+    inventory_products = [
+        {"id": 1, "name": "Product 1", "price": 10.99, "quantity": 100, "discount_percentage": 5},
+        {"id": 2, "name": "Product 2", "price": 20.49, "quantity": 50, "discount_percentage": 0},
+        {"id": 3, "name": "Product 3", "price": 15.99, "quantity": 80, "discount_percentage": 10}
+    ]
+    return render_template('view_inventory.html', inventory_products=inventory_products)
+
+# Route to delete an inventory product
+@app.route('/delete_inventory_product/<int:product_id>')
+def delete_inventory_product(product_id):
+    # Logic to delete the inventory product with the given ID
+    return "Inventory product deleted successfully."
+
+# Route to update an inventory product
+@app.route('/update_inventory_product/<int:product_id>', methods=['GET', 'POST'])
+def update_inventory_product(product_id):
+    if request.method == 'POST':
+        # Retrieve form data
+        # product_id = request.form.get('product_id')
+        new_quantity = request.form.get('new_quantity')
+        new_price = request.form.get('new_price')
+        new_details = request.form.get('new_details')
+        new_discount_percent = request.form.get('new_discount_percent')
+
+        # Here, you can update the inventory product in the database
+        
+        # For demonstration purposes, let's print the product details
+        print(f'Product ID: {product_id}')
+        print(f'New Quantity: {new_quantity}')
+        print(f'New Price: {new_price}')
+        print(f'New Details: {new_details}')
+        print(f'New Discount Percentage: {new_discount_percent}')
+
+        # Redirect to a success page or return a response
+        return 'Product updated successfully!'
+    else:
+        # Render the HTML template for updating inventory product
+        return render_template('update_inventory_product.html')
+
+
+@app.route('/add_inventory_product', methods=['GET', 'POST'])
+def add_inventory_product():
+    if request.method == 'POST':
+        # Retrieve form data
+        supplier_id = request.form.get('supplier_id')
+        name = request.form.get('name')
+        category = request.form.get('category')
+        price = request.form.get('price')
+        quantity = request.form.get('quantity')
+        details = request.form.get('details')
+        discount_percentage = request.form.get('discount_percentage')
+
+        # Here, you can add the inventory product to the database
+        
+        # For demonstration purposes, let's print the product details
+        print(f'Supplier ID: {supplier_id}')
+        print(f'Product Name: {name}')
+        print(f'Category: {category}')
+        print(f'Price: {price}')
+        print(f'Quantity: {quantity}')
+        print(f'Details: {details}')
+        print(f'Discount Percentage: {discount_percentage}')
+
+        # Redirect to a success page or return a response
+        return 'Product added successfully!'
+    else:
+        # Render the HTML template for adding inventory product
+        return render_template('add_inventory_product.html')
+    
 if __name__ == '__main__':
     app.run(debug=True)
