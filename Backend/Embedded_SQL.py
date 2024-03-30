@@ -740,4 +740,4 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
 # print(login_admin("lorem.lorem@icloud.net","JCD85QPX3HU"))
 # register_customer("Himang","1234567890","Himang","abc")
 # print(product_search(name="chicken"))
-print(add_product_to_cart(4,2,1))
+# print(add_product_to_cart(4,2,1))
