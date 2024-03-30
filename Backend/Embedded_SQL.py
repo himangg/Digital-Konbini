@@ -25,7 +25,7 @@ def login_admin(admin_mail,password):
             else:
                 if x[0][2]==password:
                     connection.close()
-                    return "Success",x[0][0]
+                    return ["Success",x[0][0]]
                 else:
                     connection.close()
                     return "Incorrect Password"
@@ -90,7 +90,7 @@ def login_customer(customer_mobile,password):
             else:
                 if x[0][2]==password:
                     connection.close()
-                    return "Success",x[0][0]
+                    return ["Success",x[0][0]]
                 else:
                     connection.close()
                     return "Incorrect Password"
@@ -120,7 +120,7 @@ def login_supplier(password,supplier_mail="",supplier_mobile=""):
             else:
                 if x[0][2]==password:
                     connection.close()
-                    return "Success",x[0][0]
+                    return ["Success",x[0][0]]
                 else:
                     connection.close()
                     return "Incorrect Password"
