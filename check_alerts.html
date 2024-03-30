@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Alerts</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .clear-btn {
+            padding: 8px 16px;
+            background-color: #FF6347;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .clear-btn:hover {
+            background-color: #FF5733;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Check Alerts</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Message ID</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Quantity Remaining</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alert in alerts %}
+                    <tr>
+                        <td>{{ alert.message_id }}</td>
+                        <td>{{ alert.product_name }}</td>
+                        <td>{{ alert.price }}</td>
+                        <td>{{ alert.quantity_remaining }}</td>
+                        <td><form action="/clear_message/{{ alert.message_id }}" method="post">
+                            <button class="clear-btn" type="submit">Clear</button>
+                        </form></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

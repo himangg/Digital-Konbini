@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Products</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px; /* Add margin bottom */
+        }
+
+        table {
+            width: 80%;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .search-container {
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            margin-right: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Add styles for quantity input */
+        .quantity-input {
+            width: 50px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>View Products</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by name...">
+            <button onclick="searchProducts()">Search</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Sale Price</th>
+                    <th>Quantity</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if products %}
+                    {% for product in products %}
+                        <tr>
+                            <td>{{ product[1] }}</td>
+                            <td>{{ product[2] }}</td>
+                            <td>{{ product[3] }}</td>
+                            <td>{{ product[4] }}</td>
+                            <td><input type="number" class="quantity-input" value="1" min="1"></td>
+                            <td><button onclick="addToCart('{{ product[0] }}')">Add to Cart</button></td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6">No products available.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+    function addToCart(productId) {
+        // Retrieve quantity input value
+        var quantityInput = document.querySelector('input[type="number"].quantity-input');
+        var quantity = quantityInput.value;
+
+        // Send AJAX request
+        $.ajax({
+            url: '/add_to_cart',
+            type: 'POST',
+            data: {
+                'product_id': productId,
+                'quantity': quantity
+            },
+            success: function(response) {
+                console.log(response);
+                // You can perform further actions here if needed, such as showing a success message to the user
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+                // Handle errors here if needed
+            }
+        });
+    }
+</script>
+    
+</body>
+</html>
