@@ -258,7 +258,7 @@ def display_all_orders_summary_format():      #for admin : Displays a summary of
     connection=connectit()
     with connection.cursor() as cursor:
         try:
-            cursor.execute("select o.order_id, o.customer_id from orders o group by order_id")
+            cursor.execute("select o.order_id, o.customer_id, o.Paid_Amount from orders o group by order_id")
             connection.close()
             return cursor.fetchall()
         except Exception as e:
