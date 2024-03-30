@@ -350,7 +350,7 @@ def add_product_to_cart(product_id,customer_id,quantity=1):
             else:
                 new_quantity=quantity
             if qty_rem>=new_quantity:
-                if new_quantity!=old_quantity:
+                if new_quantity!=quantity:
                     cursor.execute("update product_order_bridge_table set Quantity=%s where order_id=%s and product_id=%s",(new_quantity,cart_id,product_id))
                 else:
                     cursor.execute("insert into product_order_bridge_table(Order_Id,Product_ID,Quantity) values(%s,%s,%s)",(cart_id,product_id,new_quantity))
