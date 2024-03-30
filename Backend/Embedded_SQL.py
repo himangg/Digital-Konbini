@@ -13,7 +13,7 @@ def login_admin(admin_mail,password):
     connection.autocommit=False
     with connection.cursor() as cursor:
         try:
-            cursor.execute("select email,password from admins where email='%s'",admin_mail)
+            cursor.execute("select email,password from admins where email=%s",admin_mail)
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
@@ -699,4 +699,6 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
             return e
 
 #Testing :--------------------------------------------------------------------------------------
+        
 # print(login_customer(9471241522,"XBA97FFY6HQ"))
+# print(login_admin("lorem.lorem@icloud.net","JCD85QPX3HU"))
