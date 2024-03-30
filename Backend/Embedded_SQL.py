@@ -388,7 +388,7 @@ def remove_product_from_cart(product_id,customer_id):
 
 def display_cart(customer_id):           #Returns cart of a customer
     '''
-    Returns a list containing (Product name, product category, quantity selected, total price) pairs.
+    Returns a list containing (Product_ID,Product name, product category, quantity selected, total price) pairs.
     Else returns error string
     '''
     connection=connectit()
@@ -396,7 +396,7 @@ def display_cart(customer_id):           #Returns cart of a customer
         try:
             cursor.execute("select order_id from orders where customer_id=%s and payment_date is null",customer_id)
             cart_id=cursor.fetchone()[0]
-            cursor.execute("select name,category,quantity,price*(100-discount_percentage)/100*quantity 'Amount' from product p1,product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",cart_id)
+            cursor.execute("select p1.product_id,name,category,quantity,price*(100-discount_percentage)/100*quantity 'Amount' from product p1,product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",cart_id)
             connection.close()
             return cursor.fetchall()
         except Exception as e:
