@@ -132,11 +132,11 @@ VALUES
 (49, 'Sara Mercado', 8960520622, 'EPX74CAJ3IE', '400-5475 Scelerisque Rd.'),
 (50, 'Vera Gilbert', 9471241522, 'XBA97FFY6HQ', '3304 Lorem Avenue');
 
-INSERT INTO Orders (Order_ID, Customer_ID, Payment_Date, Payment_PID, Delivered_Date, Coupon_Code_Applied)
+INSERT INTO Orders (Order_ID, Customer_ID, Payment_Date, Payment_PID, Delivered_Date, Coupon_Code_Applied,Paid_Amount)
 VALUES
-(1, 3, '2023-11-29', 1, '2023-12-31', NULL),
-(2, 6, '2023-09-17', 2, '2024-02-09', NULL),
-(3, 2, '2023-05-13', 3, '2023-03-22', NULL);
+(1, 3, '2023-11-29', 1, '2023-12-31', NULL,2654),
+(2, 6, '2023-09-17', 2, '2024-02-09', NULL,5883),
+(3, 2, '2023-05-13', 3, '2023-03-22', NULL,2256);
 
 INSERT INTO Product_Order_Bridge_Table (Order_ID, Product_ID, Quantity)
 VALUES
