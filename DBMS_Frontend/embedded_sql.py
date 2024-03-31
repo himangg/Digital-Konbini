@@ -444,7 +444,7 @@ def update_inventory_product(product_id,new_quantity="",new_price="",new_details
             connection.close()
             return e
 
-def delete_inventory_product1(product_id):
+def delete_inventory_product(product_id):
     '''
     Returns 
     'Success' if correct

@@ -212,7 +212,6 @@ def view_cart():
     current_user_id = session.get('current_user_id')
     result=backend.display_cart(current_user_id)
     if current_user_id is None:
-        # Handle case when user is not logged in
         return "Please log in first to view your cart."
     else:
         # Proceed with retrieving cart items
@@ -235,19 +234,16 @@ def checkout():
         {'name': 'Item 1', 'price': 10.99},
         {'name': 'Item 2', 'price': 20.50},
         {'name': 'Item 3', 'price': 15.75}
-        # Add more cart items fetched from the database
     ]
     total_price = sum(item['price'] for item in cart_items)
     return render_template('checkout.html', cart_items=cart_items, total_price=total_price)
 
 @app.route('/view_wishlist')
 def view_wishlist():
-    # Fetch wishlist items from the database and pass them to the template
     wishlist_items = [
         {'name': 'Wishlist Item 1', 'price': '$10.99'},
         {'name': 'Wishlist Item 2', 'price': '$20.50'},
         {'name': 'Wishlist Item 3', 'price': '$15.75'}
-        # Add more wishlist items fetched from the database
     ]
     return render_template('view_wishlist.html', wishlist_items=wishlist_items)
 
@@ -259,8 +255,6 @@ def update_customer_details():
         password = request.form['password']
         current_user_id = session.get('current_user_id')
         result=backend.profile_update_customer(current_user_id,mobile,address,password)
-        # print(current_user_id)
-        # print(result)
         if result == 'Success':
             return "Details updated successfully!"
         else:
@@ -289,76 +283,61 @@ def supplier_selling_report():
 
 @app.route('/check_alerts')
 def check_alerts():
-    # Hardcoded sample data
     result=backend.show_messages(session.get('current_user_id'))
     print(session.get('current_user_id'))
     print(result)
     return render_template('check_alerts.html', alerts=result)
 
-# Route for clearing the message
 @app.route('/clear_message/<int:message_id>', methods=['POST'])
 def clear_message(message_id):
     backend.clear_message(message_id)
     return redirect('/check_alerts')
 
-# Route to view inventory products
 @app.route('/view_inventory')
 def view_inventory():
-    # Hardcoded sample data for inventory products
     result=backend.show_supplier_inventory(session.get('current_user_id'))
     print(result)
     return render_template('view_inventory.html', inventory_products=result)
 
-# Route to delete an inventory product
 @app.route('/delete_inventory_product/<int:product_id>',methods=['POST'])
 def delete_inventory_product(product_id):
-    result=backend.delete_inventory_product1(product_id)
+    result=backend.delete_inventory_product(product_id)
     print(result,product_id)
-    # Logic to delete the inventory product with the given ID
     return "Inventory product deleted successfully."
 
-# Route to update an inventory product
+@app.route('/update_inventory_product_form/<int:product_id>', methods=['POST'])
+def update_inventory_product_form(product_id):
+    print(product_id)
+    print("update_inventory_product_form")
+    return render_template('supplier_update_product.html', product_id=product_id)
+
 @app.route('/update_inventory_product/<int:product_id>', methods=['GET', 'POST'])
 def update_inventory_product(product_id):
     if request.method == 'POST':
-        # Retrieve form data
-        # product_id = request.form.get('product_id')
         new_quantity = request.form.get('new_quantity')
         new_price = request.form.get('new_price')
         new_details = request.form.get('new_details')
-        new_discount_percent = request.form.get('new_discount_percent')
-
-        # Here, you can update the inventory product in the database
-        
-        # For demonstration purposes, let's print the product details
+        new_discount_percent = request.form.get('new_discount_percent')        
         print(f'Product ID: {product_id}')
         print(f'New Quantity: {new_quantity}')
         print(f'New Price: {new_price}')
         print(f'New Details: {new_details}')
         print(f'New Discount Percentage: {new_discount_percent}')
-
-        # Redirect to a success page or return a response
         return 'Product updated successfully!'
     else:
-        # Render the HTML template for updating inventory product
         return render_template('update_inventory_product.html')
 
 
 @app.route('/add_inventory_product', methods=['GET', 'POST'])
 def add_inventory_product():
     if request.method == 'POST':
-        # Retrieve form data
         supplier_id = request.form.get('supplier_id')
         name = request.form.get('name')
         category = request.form.get('category')
         price = request.form.get('price')
         quantity = request.form.get('quantity')
         details = request.form.get('details')
-        discount_percentage = request.form.get('discount_percentage')
-
-        # Here, you can add the inventory product to the database
-        
-        # For demonstration purposes, let's print the product details
+        discount_percentage = request.form.get('discount_percentage')        
         print(f'Supplier ID: {supplier_id}')
         print(f'Product Name: {name}')
         print(f'Category: {category}')
@@ -366,11 +345,8 @@ def add_inventory_product():
         print(f'Quantity: {quantity}')
         print(f'Details: {details}')
         print(f'Discount Percentage: {discount_percentage}')
-
-        # Redirect to a success page or return a response
         return 'Product added successfully!'
     else:
-        # Render the HTML template for adding inventory product
         return render_template('add_inventory_product.html')
     
 if __name__ == '__main__':

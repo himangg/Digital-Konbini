@@ -107,6 +107,21 @@
                 });
             });
         });
+        $(document).ready(function() {
+            $('.update-btn').click(function() {
+                var productId = $(this).data('product-id'); // Retrieve the product ID from the data attribute
+                $.ajax({
+                    type: 'POST',
+                    url: '/update_inventory_product_form/' + productId, // Assuming this is the endpoint to delete a product from inventory
+                    success: function(response) {
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
