@@ -298,9 +298,7 @@ def new_coupon(admin_id,flat_discount,min_cart_value,code):
             connection.rollback()
             connection.close()
             return e
-#    ---trigger on this condition too
 
-# def display_coupons()                  ---trigger instead
 
 def delete_coupon(coupon_code):
     '''
@@ -676,12 +674,12 @@ def cart_price_to_be_payed(customer_id):           #To fetch the total amount to
             cursor.execute("select quantity, product_id from product_order_bridge_table where order_id=%s",cart_id)
             values=cursor.fetchall()
             ids=tuple([x[1] for x in values])
-            cursor.executemany("update product set quantity_remaining=quantity_remaining-%s where product_id=%s",values)
+            cursor.executemany("update product set quantity_remaining=quantity_remaining - %s where product_id=%s",values)
             cursor.executemany("select quantity_remaining from product where product_id=%s",ids)
             qty_rems=cursor.fetchall()
             ids_insufficient=[]
             for i in range(len(qty_rems)):
-                if qty_rems[0][i]<0:
+                if qty_rems[i][0]<0:
                     ids_insufficient.append((ids[i],cart_id))
             if len(ids_insufficient)!=0:
                 raise Quantity_Error("Quantity_Error")
@@ -692,7 +690,7 @@ def cart_price_to_be_payed(customer_id):           #To fetch the total amount to
                 cursor.execute("select sum(price*(100-discount_percentage)/100*quantity)-(select flat_discount from coupons where code=%s) from product p1, product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",(coupon_code,cart_id))
             connection.commit()
             connection.close()
-            return cursor.fetchone()[0],values        #First value is total price. 2nd value is to be held.
+            return cursor.fetchone()[0],values          #First value is total price. 2nd value is to be held.
             #In case customer cancels payment at this stage call cancel_cart_purchase and enter values as parameter
         except Quantity_Error as f:
             connection.rollback()
@@ -760,3 +758,9 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
 # register_customer("Himang","1234567890","Himang","abc")
 # print(product_search(name="chicken"))
 # print(add_product_to_cart(4,4,1))
+# print(update_inventory_product(1,1,1,"",1))
+# new_inventory_product(1,"abc","abc",2,2,"",0)
+# delete_inventory_product(12)
+# add_product_to_cart(3,1,2)
+# add_product_to_cart(4,1,2)
+# print(cart_price_to_be_payed(1))
