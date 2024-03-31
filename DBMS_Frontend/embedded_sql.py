@@ -520,7 +520,7 @@ def remove_from_wishlist(customer_id,product_id):
             connection.close()
             return e
     
-def supplier_selling_report(supplier_id):     #for supplier : Gives a summary of which products are selling in how much quantity for a specific supplier
+def supplier_selling_report_for_supplier(supplier_id):     #for supplier : Gives a summary of which products are selling in how much quantity for a specific supplier
     '''
     Returns a list of (Product name, quantity sold so far) pairs.
     Else returns error string

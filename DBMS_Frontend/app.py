@@ -258,32 +258,13 @@ def update_customer_details():
         password = request.form['password']
         current_user_id = session.get('current_user_id')
         result=backend.profile_update_customer(current_user_id,mobile,address,password)
-        print(current_user_id)
+        # print(current_user_id)
         # print(result)
         if result == 'Success':
             return "Details updated successfully!"
         else:
             return "Update Failed"
     return render_template('update_customer_details.html')
-
-    # if request.method == 'POST':
-    #     # Retrieve form data
-    #     address = request.form['address']
-    #     mobile = request.form['mobile']
-    #     password = request.form['password']
-        
-    #     res
-    #     # Process form data (you can implement your logic here)
-    #     # For now, just print the values
-    #     print("Address:", address)
-    #     print("Mobile Number:", mobile)
-    #     print("Password:", password)
-        
-    #     # Redirect to a success page or render a confirmation message
-    #     return "Details updated successfully!"
-    # else:
-    #     # Render the HTML template for updating customer details
-    #     return render_template('update_customer_details.html')
 
 @app.route('/supplier_update_details', methods=['GET', 'POST'])  
 def supplier_update_details():
@@ -292,20 +273,18 @@ def supplier_update_details():
         new_address = request.form['address']
         new_email = request.form['email']
         new_password = request.form['password']
-        # Add code here to update supplier's details in the database
-        return "Details updated successfully!"  
+        result=backend.profile_update_supplier(session.get('current_user_id'),new_mobile,new_password,new_address,new_email)
+        if result == 'Success':
+            return "Details updated successfully!"
+        else:
+            return "Update Failed"
     return render_template('supplier_update_details.html')
 
 @app.route('/supplier_selling_report')
 def supplier_selling_report():
-    # Hardcoded sample data
-    products = [
-        {"name": "Product A", "quantity_sold": 50},
-        {"name": "Product B", "quantity_sold": 30},
-        {"name": "Product C", "quantity_sold": 20},
-        {"name": "Product D", "quantity_sold": 10}
-    ]
-    return render_template('supplier_selling_report.html', products=products)
+    result=backend.supplier_selling_report_for_supplier(session.get('current_user_id'))
+    print(session.get('current_user_id'))
+    return render_template('supplier_selling_report.html', products=result)
 
 @app.route('/check_alerts')
 def check_alerts():
