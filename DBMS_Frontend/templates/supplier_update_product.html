@@ -58,10 +58,11 @@
 <body>
     <div class="container">
         <h1>Update Product Details</h1>
-        <form action="/update_product" method="POST">
+        <form action="/update_inventory_product" method="POST">
             <input type="hidden" name="product_id" value="{{ product_id }}">
             <input type="number" name="price" placeholder="Enter Price"><br>
             <input type="number" name="quantity" placeholder="Enter Quantity"><br>
+            <input type="text" name="details" placeholder="Enter details"><br>
             <input type="number" name="discount" placeholder="Enter Discount (%)"><br>
             <button type="submit">Update</button>
         </form>

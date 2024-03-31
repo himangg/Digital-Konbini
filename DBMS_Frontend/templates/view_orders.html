@@ -24,16 +24,23 @@
             color: #333;
         }
 
-        .orders-list {
+        .orders-table {
             margin-top: 20px;
-            padding: 20px;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .order {
+        th, td {
             padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .order {
             border-bottom: 1px solid #ddd;
         }
     </style>
@@ -41,15 +48,28 @@
 <body>
     <div class="container">
         <h1>View Orders</h1>
-        <div class="orders-list">
-            {% if orders %}
-                {% for order in orders %}
-                    <div class="order">{{ order.name }} - {{ order.amount }}</div>
-                {% endfor %}
-            {% else %}
-                <p>No orders available.</p>
-            {% endif %}
-        </div>
+        {% if orders %}
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Paid Amount</th>
+                        <th>Delivered Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr class="order">
+                            <td>{{ order[0] }}</td>
+                            <td>{{ order[1] }}</td>
+                            <td>{{ order[2] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No orders available.</p>
+        {% endif %}
     </div>
 </body>
 </html>

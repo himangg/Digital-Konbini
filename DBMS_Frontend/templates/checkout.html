@@ -70,27 +70,69 @@
                 transform: scale(1);
             }
         }
-
-        button.clicked {
-            animation: buttonClick 0.5s ease;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Checkout</h1>
-        <div class="cart-items">
-            {% for item in cart_items %}
-                <div class="item">{{ item.name }} - ${{ item.price }}</div>
-            {% endfor %}
-        </div>
         <div class="total-price">
             Total Price: ${{ total_price }}
         </div>
-        <div class="buttons">
-            <button onclick="location.href='/view_cart'; this.classList.add('clicked')">Go Back</button>
-            <button onclick="location.href='/payment'; this.classList.add('clicked')">Confirm Checkout</button>
+        <div class="payment-id">
+            <!-- Add a box for the customer to enter the payment ID -->
+            <label for="payment-id">Enter Payment ID:</label>
+            <input type="text" id="payment-id" name="payment_id" placeholder="Payment ID">
         </div>
+        <div class="buttons">
+            <!-- Call confirm_checkout function when Confirm Checkout button is clicked -->
+            <button id="confirm-btn">Confirm Checkout</button>
+            <!-- Call cancel_order function when Go Back button is clicked -->
+            <button id="cancel-btn">Go Back</button>
+        </div>
+    </div>
 
+    <!-- Include jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Add click event listener to the Confirm Checkout button
+            $('#confirm-btn').click(function() {
+                var paymentId = $('#payment-id').val(); // Get the value of the payment ID input
+                // Send AJAX request to confirm checkout with payment ID
+                $.ajax({
+                    type: 'POST',
+                    url: '/confirm_checkout',
+                    data: { payment_id: paymentId }, // Include payment ID in the request data
+                    success: function(response) {
+                        // Handle success response if needed
+                        // For example, redirect to a success page
+                        window.location.href = '/customer_home';
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response if needed
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+
+            // Add click event listener to the Go Back button
+            $('#cancel-btn').click(function() {
+                // Send AJAX request to cancel the order
+                $.ajax({
+                    type: 'POST',
+                    url: '/cancel_order', // Assuming this is the route for canceling the order
+                    success: function(response) {
+                        // Handle success response if needed
+                        // For example, redirect to the cart page
+                        window.location.href = '/view_cart';
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response if needed
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

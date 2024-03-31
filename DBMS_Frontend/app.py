@@ -10,8 +10,6 @@ def parse_json(value):
 
 app.jinja_env.filters['parse_json'] = parse_json
 
-current_user_id = None
-
 @app.route('/')
 def index():
     session.clear()
@@ -199,18 +197,16 @@ def add_to_cart():
 @app.route('/view_past_orders')
 def view_orders():
     # Fetch orders from the database and pass them to the template
-    orders = [
-        {'name': 'Order 1', 'amount': '$50.00'},
-        {'name': 'Order 2', 'amount': '$100.00'},
-        {'name': 'Order 3', 'amount': '$75.00'}
-        # Add more orders fetched from the database
-    ]
-    return render_template('view_orders.html', orders=orders)
+    result=backend.display_customer_past_orders(session.get('current_user_id'))
+    print(result)
+    return render_template('view_orders.html', orders=result)
 
 @app.route('/view_cart')
 def view_cart():
     current_user_id = session.get('current_user_id')
     result=backend.display_cart(current_user_id)
+    print(current_user_id)
+    print(result)
     if current_user_id is None:
         return "Please log in first to view your cart."
     else:
@@ -230,13 +226,31 @@ def remove_from_cart():
 
 @app.route('/checkout')
 def checkout():
-    cart_items = [
-        {'name': 'Item 1', 'price': 10.99},
-        {'name': 'Item 2', 'price': 20.50},
-        {'name': 'Item 3', 'price': 15.75}
-    ]
-    total_price = sum(item['price'] for item in cart_items)
-    return render_template('checkout.html', cart_items=cart_items, total_price=total_price)
+    result=backend.cart_price_to_be_payed(session.get('current_user_id'))
+    print(session.get('current_user_id'))
+    print(result)
+    if(result == 'Quantity_Error'):
+        return redirect(url_for('view_cart'))
+    else:
+        session['values'] = result[1]
+        return render_template('checkout.html',total_price=result[0])
+
+@app.route('/confirm_checkout', methods=['POST'])
+def confirm_checkout():
+    current_user_id = session.get('current_user_id')
+    payment_pid = request.form.get('payment_id')
+    print(payment_pid)
+    result=backend.cart_purchase(payment_pid=payment_pid,customer_id=current_user_id)
+    print(result)
+    # session.pop('values', None)
+    return "Order placed successfully!"
+
+@app.route('/cancel_order', methods=['POST'])
+def cancel_order():
+    print("cancel_order")
+    result=backend.cancel_cart_purchase(session.get('values'))
+    print(result)
+    return "Order cancelled successfully!"
 
 @app.route('/view_wishlist')
 def view_wishlist():
@@ -305,47 +319,55 @@ def delete_inventory_product(product_id):
     print(result,product_id)
     return "Inventory product deleted successfully."
 
-@app.route('/update_inventory_product_form/<int:product_id>', methods=['POST'])
+@app.route('/update_inventory_product_form/<int:product_id>', methods=['GET','POST'])
 def update_inventory_product_form(product_id):
     print(product_id)
     print("update_inventory_product_form")
-    return render_template('supplier_update_product.html', product_id=product_id)
+    return render_template('supplier_update_product.html',product_id=product_id)
 
-@app.route('/update_inventory_product/<int:product_id>', methods=['GET', 'POST'])
-def update_inventory_product(product_id):
+@app.route('/update_inventory_product', methods=['GET', 'POST'])
+def update_inventory_product():
     if request.method == 'POST':
-        new_quantity = request.form.get('new_quantity')
-        new_price = request.form.get('new_price')
-        new_details = request.form.get('new_details')
-        new_discount_percent = request.form.get('new_discount_percent')        
+        product_id = request.form.get('product_id')
+        new_quantity = request.form.get('quantity')
+        new_price = request.form.get('price')
+        new_details = request.form.get('details')
+        new_discount_percent = request.form.get('discount')        
         print(f'Product ID: {product_id}')
         print(f'New Quantity: {new_quantity}')
         print(f'New Price: {new_price}')
         print(f'New Details: {new_details}')
         print(f'New Discount Percentage: {new_discount_percent}')
-        return 'Product updated successfully!'
-    else:
-        return render_template('update_inventory_product.html')
-
+        result=backend.update_inventory_product(product_id,new_quantity,new_price,new_details,new_discount_percent)
+        print(result)
+        if result == 'Success':
+            return 'Product updated successfully!'
+        else:
+            return 'Update Failed'
 
 @app.route('/add_inventory_product', methods=['GET', 'POST'])
 def add_inventory_product():
     if request.method == 'POST':
-        supplier_id = request.form.get('supplier_id')
+        print("add_inventory_product")
         name = request.form.get('name')
         category = request.form.get('category')
         price = request.form.get('price')
         quantity = request.form.get('quantity')
         details = request.form.get('details')
-        discount_percentage = request.form.get('discount_percentage')        
-        print(f'Supplier ID: {supplier_id}')
+        discount_percentage = request.form.get('discount_percentage')
+        current_user_id = session.get('current_user_id')
+        print(f'Supplier ID: {current_user_id}')
         print(f'Product Name: {name}')
         print(f'Category: {category}')
         print(f'Price: {price}')
         print(f'Quantity: {quantity}')
         print(f'Details: {details}')
         print(f'Discount Percentage: {discount_percentage}')
-        return 'Product added successfully!'
+        result = backend.new_inventory_product(current_user_id, name, category, price, quantity, details, discount_percentage)
+        if result == 'Success':
+            return 'Product added successfully!'
+        else:
+            return 'Addition Failed'
     else:
         return render_template('add_inventory_product.html')
     
