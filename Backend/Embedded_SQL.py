@@ -670,7 +670,7 @@ def cart_price_to_be_payed(customer_id):           #To fetch the total amount to
             qty_rems=cursor.fetchall()
             ids_insufficient=[]
             for i in range(len(qty_rems)):
-                if qty_rems[i]<0:
+                if qty_rems[0][i]<0:
                     ids_insufficient.append((ids[i],cart_id))
             if len(ids_insufficient)!=0:
                 raise Quantity_Error("Quantity_Error")
@@ -750,3 +750,7 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
 # print(product_search(name="chicken"))
 # print(add_product_to_cart(4,4,1))
 # print(update_inventory_product(1,1,1,"",1))
+# new_inventory_product(1,"abc","abc",2,2,"",0)
+# delete_inventory_product(12)
+# add_product_to_cart(3,1,2)
+print(cart_price_to_be_payed(1))
