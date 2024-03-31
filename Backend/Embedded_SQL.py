@@ -618,7 +618,7 @@ def show_messages(supplier_id):             #To return all messages regarding pr
     with connection.cursor() as cursor:
         #Returns details of products whose quantity left is less than 10
         try:
-            cursor.execute("select message_id,p.name,p.price,p.quantity_remaining from messages where supplier_id=%s",supplier_id)
+            cursor.execute("select message_id,p.name,p.price,p.quantity_remaining from messages m,product p where m.supplier_id=%s and p.product_id=m.product_id",supplier_id)
             insufficient_products=cursor.fetchall()
             connection.close()
             return insufficient_products
@@ -747,4 +747,7 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
 # print(login_admin("lorem.lorem@icloud.net","JCD85QPX3HU"))
 # register_customer("Himang","1234567890","Himang","abc")
 # print(product_search(name="chicken"))
-print(add_product_to_cart(4,4,1))
+# print(add_product_to_cart(4,4,1))
+# print(remove_product_from_cart(7,2))
+# print(login_supplier( supplier_mail="velit.sed@hotmail.net",password="SKA35NOH4QN"))
+# print(show_messages(1))
