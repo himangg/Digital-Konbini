@@ -94,10 +94,11 @@ def login_supplier():
         password = request.form['password']
         
         if(phoneORemail.find('@') == -1):
-            result = backend.login_supplier(password,supplier_mobile=phoneORemail)
+            result = backend.login_supplier(password=password,supplier_mobile=phoneORemail)
         else:
-            result = backend.login_supplier(phoneORemail,supplier_mail=phoneORemail)
-        print(result[0],result[1])
+            result = backend.login_supplier(password=password,supplier_mail=phoneORemail)
+        # print(phoneORemail,password)
+        # print(result[0],result[1])
         if result[0] == 'Success':
             session['current_user_id'] = result[1]
             return redirect(url_for('supplier_home'))
@@ -290,6 +291,7 @@ def supplier_selling_report():
 def check_alerts():
     # Hardcoded sample data
     result=backend.show_messages(session.get('current_user_id'))
+    print(session.get('current_user_id'))
     print(result)
     return render_template('check_alerts.html', alerts=result)
 
