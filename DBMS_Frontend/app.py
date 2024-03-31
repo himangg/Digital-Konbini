@@ -97,6 +97,7 @@ def login_supplier():
             result = backend.login_supplier(password,supplier_mobile=phoneORemail)
         else:
             result = backend.login_supplier(phoneORemail,supplier_mail=phoneORemail)
+        print(result[0],result[1])
         if result[0] == 'Success':
             session['current_user_id'] = result[1]
             return redirect(url_for('supplier_home'))

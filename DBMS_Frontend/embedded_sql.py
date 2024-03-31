@@ -21,14 +21,14 @@ def login_admin(admin_mail,password):
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
-                return "Mail incorrect"
+                return ["Mail incorrect",None]
             else:
                 if x[0][2]==password:
                     connection.close()
                     return ["Success",x[0][0]]
                 else:
                     connection.close()
-                    return "Incorrect Password"
+                    return ["Incorrect Password",None]
         except Exception as e:
             connection.close()
             return e
@@ -86,14 +86,14 @@ def login_customer(customer_mobile,password):
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
-                return "Mobile incorrect"
+                return ["Mobile incorrect",None]
             else:
                 if x[0][2]==password:
                     connection.close()
                     return ["Success",x[0][0]]
                 else:
                     connection.close()
-                    return "Incorrect Password"
+                    return ["Incorrect Password",None]
         except Exception as e:
             connection.close()
             return e
@@ -116,14 +116,14 @@ def login_supplier(password,supplier_mail="",supplier_mobile=""):
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
-                return "Mail/Mobile incorrect"
+                return ["Mail/Mobile incorrect",None]
             else:
                 if x[0][2]==password:
                     connection.close()
                     return ["Success",x[0][0]]
                 else:
                     connection.close()
-                    return "Incorrect Password"
+                    return ["Incorrect Password",None]
         except Exception as e:
             connection.close()
             return e
