@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template,redirect,url_for, request, session
 import json
 import embedded_sql as backend
 from flask import redirect
@@ -10,10 +10,11 @@ def parse_json(value):
 
 app.jinja_env.filters['parse_json'] = parse_json
 
-current_user_id = 51
+current_user_id = None
 
 @app.route('/')
 def index():
+    session.clear()
     return render_template('homepage.html')
 
 @app.route('/customer_login')
@@ -45,7 +46,6 @@ def register_customer():
         password = request.form['password']
         print(name, phone, address, password)
         result = backend.register_customer(name, phone, password, address)
-        
         if result == 'Success':
             return render_template('customer_login.html')
         else:
@@ -65,7 +65,6 @@ def register_supplier():
         else:
             return "Registration Failed"
 
-# Route to handle customer login
 @app.route('/login_customer', methods=['POST'])
 def login_customer():
     global current_user_id
@@ -73,13 +72,20 @@ def login_customer():
         phone = request.form['phone']
         password = request.form['password']
         result = backend.login_customer(phone, password)
-        # print(password)
         if result[0] == 'Success':
-            current_user_id = result[1]
-            return render_template('customer_home.html') 
+            session['current_user_id'] = result[1]
+            return redirect(url_for('customer_home'))
         else:
-            return result
-
+            return "Login Failed"
+        
+@app.route('/customer_home')
+def customer_home():
+    # print(session.get('current_user_id'))
+    if 'current_user_id' in session:
+        return render_template('customer_home.html')
+    else:
+        return redirect(url_for('')) 
+    
 @app.route('/login_supplier', methods=['POST'])
 def login_supplier():
     global current_user_id
@@ -92,10 +98,17 @@ def login_supplier():
         else:
             result = backend.login_supplier(phoneORemail,supplier_mail=phoneORemail)
         if result[0] == 'Success':
-            current_user_id=result[1]
-            return render_template('supplier_home.html')
+            session['current_user_id'] = result[1]
+            return redirect(url_for('supplier_home'))
         else:
             return "Login Failed" 
+        
+@app.route('/supplier_home')
+def supplier_home():
+    if 'current_user_id' in session:
+        return render_template('supplier_home.html')
+    else:
+        return redirect(url_for(''))
 
 @app.route('/login_admin', methods=['POST'])
 def login_admin():
@@ -105,17 +118,27 @@ def login_admin():
         password = request.form['password']
         result = backend.login_admin(email, password)
         if result[0] == 'Success':
-            current_user_id = result[1]
-            return render_template('admin_home.html')
+            session['current_user_id'] = result[1]
+            # print(result[1])
+            # print(session.get('current_user_id'))
+            return redirect(url_for('admin_home'))
         else:
             return "Login Failed"
+        
+@app.route('/admin_home')
+def admin_home():
+    if 'current_user_id' in session:
+        return render_template('admin_home.html')
+    else:
+        return redirect(url_for(''))
 
 @app.route('/update_admin_details', methods=['GET', 'POST'])
 def update_admin_details():
     if request.method == 'POST':
         new_email = request.form['email']
         new_password = request.form['password']
-        
+        current_user_id = session.get('current_user_id')
+        print(current_user_id)
         result=backend.profile_update_admin(current_user_id,new_email, new_password)
         # print(current_user_id)
         # print(result)
@@ -139,27 +162,17 @@ def view_suppliers():
 
 @app.route('/selling_report')
 def selling_report():
-    # Hardcoded selling report data
     result=backend.supplier_selling_report()
-    print(result)
-    selling_report = [
-        {'supplier_id': 1, 'supplier_name': 'Supplier 1', 'product_name': 'Product A', 'quantity_sold': 100},
-        {'supplier_id': 2, 'supplier_name': 'Supplier 2', 'product_name': 'Product B', 'quantity_sold': 150},
-        {'supplier_id': 3, 'supplier_name': 'Supplier 3', 'product_name': 'Product C', 'quantity_sold': 200}
-    ]
-    
     return render_template('selling_report.html', selling_report=result)
 
 @app.route('/view_orders_summary')
 def view_orders_summary():
     result=backend.display_all_orders_summary_format()
-    print(result)
     return render_template('view_orders_summary.html', orders_summary=result)
 
 @app.route('/view_products')
 def view_products():
     result=backend.product_search()
-    # print(result)
     return render_template('view_products.html', products=result)
 
 @app.route('/add_to_cart', methods=['POST'])
@@ -170,27 +183,16 @@ def add_to_cart():
         quantity = int(request.form['quantity'])
         print(product_id)
         print(quantity)
-        print(current_user_id)
+        # print(current_user_id)
         # product_id = 1
         # if(quantity == ''): quantity = 1
+        current_user_id = session.get('current_user_id')
         result=backend.add_product_to_cart(product_id,current_user_id,quantity=quantity)
         print(result)
         if(result == -1):
             return "Product quantity not available in stock!"
         else:
             return "Product added to cart successfully!"
-
-# @app.route('/view_cartproduct')
-# def view_cartproduct():
-#     result=backend.display_cart(current_user_id)
-#     print(result)
-#     products = [
-#         {"id": 1, "name": "Product 1", "category": "Category A", "price": 10.99, "sale_price": 8.99},
-#         {"id": 2, "name": "Product 2", "category": "Category B", "price": 15.99, "sale_price": 12.99},
-#         {"id": 3, "name": "Product 3", "category": "Category A", "price": 20.99, "sale_price": 18.99}
-#     ]
-#     return render_template('view_cart.html', products=products)
-
 
 @app.route('/view_past_orders')
 def view_orders():
@@ -205,21 +207,22 @@ def view_orders():
 
 @app.route('/view_cart')
 def view_cart():
-    # Hardcoded cart items data
+    current_user_id = session.get('current_user_id')
     result=backend.display_cart(current_user_id)
-    print(result)
-    # cart_items = [
-    #     {'name': 'Product 1', 'category': 'Category A', 'quantity': 2, 'amount': 50},
-    #     {'name': 'Product 2', 'category': 'Category B', 'quantity': 1, 'amount': 30},
-    #     {'name': 'Product 3', 'category': 'Category C', 'quantity': 3, 'amount': 70}
-    # ]
-    return render_template('view_cart.html', cart_items=result)
+    if current_user_id is None:
+        # Handle case when user is not logged in
+        return "Please log in first to view your cart."
+    else:
+        # Proceed with retrieving cart items
+        result = backend.display_cart(current_user_id)
+        return render_template('view_cart.html', cart_items=result)
 
 @app.route('/remove_from_cart', methods=['POST'])
 def remove_from_cart():
     if request.method == 'POST':
         print("remove from cart")
         product_id = request.form['product_id']
+        current_user_id = session.get('current_user_id')
         result=backend.remove_product_from_cart(product_id,current_user_id)
         print(result)
         return "Product removed from cart successfully!"
@@ -252,7 +255,7 @@ def update_customer_details():
         address = request.form['address']
         mobile = request.form['mobile']
         password = request.form['password']
-        
+        current_user_id = session.get('current_user_id')
         result=backend.profile_update_customer(current_user_id,mobile,address,password)
         print(current_user_id)
         # print(result)
@@ -401,4 +404,5 @@ def add_inventory_product():
         return render_template('add_inventory_product.html')
     
 if __name__ == '__main__':
+    app.secret_key='your_secret_key'
     app.run(debug=True)
