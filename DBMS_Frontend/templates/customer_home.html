@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Home Page</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        /* Add animation */
+        @keyframes buttonClick {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        button.clicked {
+            animation: buttonClick 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, Customer!</h1>
+        <div class="buttons">
+            <button onclick="handleButtonClick('/view_products', this)">View Products</button>
+            <button onclick="handleButtonClick('/view_past_orders', this)">View Past Orders</button>
+            <button onclick="handleButtonClick('/view_cart', this)">View Cart</button>
+            <button onclick="handleButtonClick('/view_wishlist', this)">View Wishlist</button>
+            <button onclick="handleButtonClick('/update_customer_details', this)">Update Details</button>
+        </div>
+    </div>
+<script>
+    function handleButtonClick(url, button) {
+        button.classList.add('clicked');
+        window.location.href = url;
+    }
+</script>    
+</body>
+</html>

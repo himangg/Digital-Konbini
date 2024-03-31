@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Wishlist</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .wishlist-items {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .buttons {
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 8px 16px;
+            margin: 0 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>View Wishlist</h1>
+        <div class="wishlist-items">
+            {% if wishlist_items %}
+                {% for item in wishlist_items %}
+                    <div class="item">{{ item.name }} - {{ item.price }}
+                        <button onclick="location.href='/delete_from_cart'">Delete Product</button>
+
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No items in wishlist.</p>
+            {% endif %}
+        </div>
+        <div class="buttons">
+            <button onclick="location.href='/add_to_wishlist'">Add Product to Wishlist</button>
+            <button onclick="location.href='/add_to_cart'">Add Product to Cart</button>
+
+        </div>
+    </div>
+</body>
+</html>
