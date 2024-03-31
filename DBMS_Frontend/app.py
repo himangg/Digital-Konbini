@@ -289,13 +289,9 @@ def supplier_selling_report():
 @app.route('/check_alerts')
 def check_alerts():
     # Hardcoded sample data
-    alerts = [
-        {"message_id": 1, "product_name": "Product A", "price": 10.99, "quantity_remaining": 20},
-        {"message_id": 2, "product_name": "Product B", "price": 15.49, "quantity_remaining": 15},
-        {"message_id": 3, "product_name": "Product C", "price": 22.99, "quantity_remaining": 10},
-        {"message_id": 4, "product_name": "Product D", "price": 18.79, "quantity_remaining": 5}
-    ]
-    return render_template('check_alerts.html', alerts=alerts)
+    result=backend.show_messages(session.get('current_user_id'))
+    print(result)
+    return render_template('check_alerts.html', alerts=result)
 
 # Route for clearing the message
 @app.route('/clear_message/<int:message_id>', methods=['POST'])
@@ -307,8 +303,6 @@ def clear_message(message_id):
     
     # After clearing the message, redirect back to the same page
     return redirect('/check_alerts')
-
-
 
 # Route to view inventory products
 @app.route('/view_inventory')
