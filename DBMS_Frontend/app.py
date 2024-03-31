@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, render_template,redirect,url_for, request, session
 import json
-import embedded_sql as backend
+import Embedded_SQL as database
 from flask import redirect
 from flask import url_for
 
@@ -43,7 +43,7 @@ def register_customer():
         address = request.form['address']
         password = request.form['password']
         print(name, phone, address, password)
-        result = backend.register_customer(name, phone, password, address)
+        result = database.register_customer(name, phone, password, address)
         if result == 'Success':
             return render_template('customer_login.html')
         else:
@@ -57,7 +57,7 @@ def register_supplier():
         address = request.form['address']
         email = request.form['email']
         password = request.form['password']
-        result = backend.register_supplier(name, password, phone,email, address)
+        result = database.register_supplier(name, password, phone,email, address)
         if result == 'Success':
             return render_template('supplier_login.html')
         else:
@@ -69,7 +69,7 @@ def login_customer():
     if request.method == 'POST':
         phone = request.form['phone']
         password = request.form['password']
-        result = backend.login_customer(phone, password)
+        result = database.login_customer(phone, password)
         if result[0] == 'Success':
             session['current_user_id'] = result[1]
             return redirect(url_for('customer_home'))
@@ -92,9 +92,9 @@ def login_supplier():
         password = request.form['password']
         
         if(phoneORemail.find('@') == -1):
-            result = backend.login_supplier(password=password,supplier_mobile=phoneORemail)
+            result = database.login_supplier(password=password,supplier_mobile=phoneORemail)
         else:
-            result = backend.login_supplier(password=password,supplier_mail=phoneORemail)
+            result = database.login_supplier(password=password,supplier_mail=phoneORemail)
         # print(phoneORemail,password)
         # print(result[0],result[1])
         if result[0] == 'Success':
@@ -116,7 +116,7 @@ def login_admin():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        result = backend.login_admin(email, password)
+        result = database.login_admin(email, password)
         if result[0] == 'Success':
             session['current_user_id'] = result[1]
             # print(result[1])
@@ -139,7 +139,7 @@ def update_admin_details():
         new_password = request.form['password']
         current_user_id = session.get('current_user_id')
         print(current_user_id)
-        result=backend.profile_update_admin(current_user_id,new_email, new_password)
+        result=database.profile_update_admin(current_user_id,new_email, new_password)
         # print(current_user_id)
         # print(result)
         if result == 'Success':
@@ -151,28 +151,28 @@ def update_admin_details():
 
 @app.route('/view_customers')
 def view_customers():
-    result=backend.display_all_customers()
+    result=database.display_all_customers()
     return render_template('view_customers.html', customers=result)
 
 @app.route('/view_suppliers')
 def view_suppliers():
-    result=backend.display_all_suppliers()
+    result=database.display_all_suppliers()
     return render_template('view_suppliers.html', suppliers=result)
 
 
 @app.route('/selling_report')
 def selling_report():
-    result=backend.supplier_selling_report()
+    result=database.supplier_selling_report()
     return render_template('selling_report.html', selling_report=result)
 
 @app.route('/view_orders_summary')
 def view_orders_summary():
-    result=backend.display_all_orders_summary_format()
+    result=database.display_all_orders_summary_format()
     return render_template('view_orders_summary.html', orders_summary=result)
 
 @app.route('/view_products')
 def view_products():
-    result=backend.product_search()
+    result=database.product_search()
     return render_template('view_products.html', products=result)
 
 @app.route('/add_to_cart', methods=['POST'])
@@ -180,14 +180,17 @@ def add_to_cart():
     print("add to cart")
     if request.method == 'POST':
         product_id = request.form['product_id']
-        quantity = int(request.form['quantity'])
+        quantity = request.form['quantity']
         print(product_id)
         print(quantity)
         # print(current_user_id)
         # product_id = 1
-        # if(quantity == ''): quantity = 1
+        if(quantity == ''): 
+            quantity = 1
+        else:
+            quantity=int(quantity)
         current_user_id = session.get('current_user_id')
-        result=backend.add_product_to_cart(product_id,current_user_id,quantity=quantity)
+        result=database.add_product_to_cart(product_id,current_user_id,quantity=quantity)
         print(result)
         if(result == -1):
             return "Product quantity not available in stock!"
@@ -197,21 +200,21 @@ def add_to_cart():
 @app.route('/view_past_orders')
 def view_orders():
     # Fetch orders from the database and pass them to the template
-    result=backend.display_customer_past_orders(session.get('current_user_id'))
+    result=database.display_customer_past_orders(session.get('current_user_id'))
     print(result)
     return render_template('view_orders.html', orders=result)
 
 @app.route('/view_cart')
 def view_cart():
     current_user_id = session.get('current_user_id')
-    result=backend.display_cart(current_user_id)
+    result=database.display_cart(current_user_id)
     print(current_user_id)
     print(result)
     if current_user_id is None:
         return "Please log in first to view your cart."
     else:
         # Proceed with retrieving cart items
-        result = backend.display_cart(current_user_id)
+        result = database.display_cart(current_user_id)
         return render_template('view_cart.html', cart_items=result)
 
 @app.route('/remove_from_cart', methods=['POST'])
@@ -220,27 +223,27 @@ def remove_from_cart():
         print("remove from cart")
         product_id = request.form['product_id']
         current_user_id = session.get('current_user_id')
-        result=backend.remove_product_from_cart(product_id,current_user_id)
+        result=database.remove_product_from_cart(product_id,current_user_id)
         print(result)
         return "Product removed from cart successfully!"
 
 @app.route('/checkout')
 def checkout():
-    result=backend.cart_price_to_be_payed(session.get('current_user_id'))
+    result=database.cart_price_to_be_payed(session.get('current_user_id'))
     print(session.get('current_user_id'))
     print(result)
     if(result == 'Quantity_Error'):
         return redirect(url_for('view_cart'))
     else:
         session['values'] = result[1]
-        return render_template('checkout.html',total_price=result[0])
+        return render_template('checkout.html',total_price=result[0],coupon=result[2])
 
 @app.route('/confirm_checkout', methods=['POST'])
 def confirm_checkout():
     current_user_id = session.get('current_user_id')
     payment_pid = request.form.get('payment_id')
     print(payment_pid)
-    result=backend.cart_purchase(payment_pid=payment_pid,customer_id=current_user_id)
+    result=database.cart_purchase(payment_pid=payment_pid,customer_id=current_user_id,values=session.get('values'))
     print(result)
     # session.pop('values', None)
     return "Order placed successfully!"
@@ -248,7 +251,7 @@ def confirm_checkout():
 @app.route('/cancel_order', methods=['POST'])
 def cancel_order():
     print("cancel_order")
-    result=backend.cancel_cart_purchase(session.get('values'))
+    result=database.cancel_cart_purchase(session.get('values'))
     print(result)
     return "Order cancelled successfully!"
 
@@ -268,7 +271,7 @@ def update_customer_details():
         mobile = request.form['mobile']
         password = request.form['password']
         current_user_id = session.get('current_user_id')
-        result=backend.profile_update_customer(current_user_id,mobile,address,password)
+        result=database.profile_update_customer(current_user_id,mobile,address,password)
         if result == 'Success':
             return "Details updated successfully!"
         else:
@@ -282,7 +285,7 @@ def supplier_update_details():
         new_address = request.form['address']
         new_email = request.form['email']
         new_password = request.form['password']
-        result=backend.profile_update_supplier(session.get('current_user_id'),new_mobile,new_password,new_address,new_email)
+        result=database.profile_update_supplier(session.get('current_user_id'),new_mobile,new_password,new_address,new_email)
         if result == 'Success':
             return "Details updated successfully!"
         else:
@@ -291,31 +294,31 @@ def supplier_update_details():
 
 @app.route('/supplier_selling_report')
 def supplier_selling_report():
-    result=backend.supplier_selling_report_for_supplier(session.get('current_user_id'))
+    result=database.supplier_selling_report_for_supplier(session.get('current_user_id'))
     print(session.get('current_user_id'))
     return render_template('supplier_selling_report.html', products=result)
 
 @app.route('/check_alerts')
 def check_alerts():
-    result=backend.show_messages(session.get('current_user_id'))
+    result=database.show_messages(session.get('current_user_id'))
     print(session.get('current_user_id'))
     print(result)
     return render_template('check_alerts.html', alerts=result)
 
 @app.route('/clear_message/<int:message_id>', methods=['POST'])
 def clear_message(message_id):
-    backend.clear_message(message_id)
+    database.clear_message(message_id)
     return redirect('/check_alerts')
 
 @app.route('/view_inventory')
 def view_inventory():
-    result=backend.show_supplier_inventory(session.get('current_user_id'))
+    result=database.show_supplier_inventory(session.get('current_user_id'))
     print(result)
     return render_template('view_inventory.html', inventory_products=result)
 
 @app.route('/delete_inventory_product/<int:product_id>',methods=['POST'])
 def delete_inventory_product(product_id):
-    result=backend.delete_inventory_product(product_id)
+    result=database.delete_inventory_product(product_id)
     print(result,product_id)
     return "Inventory product deleted successfully."
 
@@ -338,7 +341,7 @@ def update_inventory_product():
         print(f'New Price: {new_price}')
         print(f'New Details: {new_details}')
         print(f'New Discount Percentage: {new_discount_percent}')
-        result=backend.update_inventory_product(product_id,new_quantity,new_price,new_details,new_discount_percent)
+        result=database.update_inventory_product(product_id,new_quantity,new_price,new_details,new_discount_percent)
         print(result)
         if result == 'Success':
             return 'Product updated successfully!'
@@ -356,6 +359,7 @@ def add_inventory_product():
         details = request.form.get('details')
         discount_percentage = request.form.get('discount_percentage')
         current_user_id = session.get('current_user_id')
+        print(current_user_id, name, category, price, quantity, details, discount_percentage)
         print(f'Supplier ID: {current_user_id}')
         print(f'Product Name: {name}')
         print(f'Category: {category}')
@@ -363,7 +367,7 @@ def add_inventory_product():
         print(f'Quantity: {quantity}')
         print(f'Details: {details}')
         print(f'Discount Percentage: {discount_percentage}')
-        result = backend.new_inventory_product(current_user_id, name, category, price, quantity, details, discount_percentage)
+        result = database.new_inventory_product(current_user_id, name, category, price, quantity, details, discount_percentage)
         if result == 'Success':
             return 'Product added successfully!'
         else:
