@@ -391,6 +391,7 @@ def display_cart(customer_id):           #Returns cart of a customer
     '''
     connection=connectit()
     with connection.cursor() as cursor:
+        connection.begin()
         try:
             cursor.execute("select order_id from orders where customer_id=%s and payment_date is null",customer_id)
             result=cursor.fetchone()
@@ -401,9 +402,11 @@ def display_cart(customer_id):           #Returns cart of a customer
                 cursor.execute("select order_id from orders where customer_id=%s and payment_date is null",customer_id)
                 cart_id=cursor.fetchone()[0]
             cursor.execute("select p1.product_id,name,category,quantity,price*(100-discount_percentage)/100*quantity 'Amount' from product p1,product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",cart_id)
+            connection.commit()
             connection.close()
             return cursor.fetchall()
         except Exception as e:
+            connection.rollback()
             connection.close()
             return e
 
