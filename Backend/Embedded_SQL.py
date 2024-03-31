@@ -724,7 +724,7 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
     with connection.cursor() as cursor:
         connection.begin()
         try:
-            if payment_pid=="":
+            if payment_pid==None:
                 return -1
             cursor.execute("select order_id,coupon_code_applied from orders where customer_id=%s and payment_date is null",customer_id)
             cart_id,coupon_code=cursor.fetchone()        
