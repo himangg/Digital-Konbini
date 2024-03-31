@@ -618,7 +618,7 @@ def show_messages(supplier_id):             #To return all messages regarding pr
     with connection.cursor() as cursor:
         #Returns details of products whose quantity left is less than 10
         try:
-            cursor.execute("select message_id,p.name,p.price,p.quantity_remaining from messages where supplier_id=%s",supplier_id)
+            cursor.execute("select message_id,p.name,p.price,p.quantity_remaining from messages m,product p where m.supplier_id=%s and p.product_id=m.product_id",supplier_id)
             insufficient_products=cursor.fetchall()
             connection.close()
             return insufficient_products
