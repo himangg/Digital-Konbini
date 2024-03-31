@@ -68,18 +68,12 @@
     <div class="container">
         <h1>Welcome, Customer!</h1>
         <div class="buttons">
-            <button onclick="handleButtonClick('/view_products', this)">View Products</button>
-            <button onclick="handleButtonClick('/view_past_orders', this)">View Past Orders</button>
-            <button onclick="handleButtonClick('/view_cart', this)">View Cart</button>
-            <button onclick="handleButtonClick('/view_wishlist', this)">View Wishlist</button>
-            <button onclick="handleButtonClick('/update_customer_details', this)">Update Details</button>
+            <button onclick="location.href='/view_products'; this.classList.add('clicked')">View Products</button>
+            <button onclick="location.href='/view_past_orders'; this.classList.add('clicked')">View Past Orders</button>
+            <button onclick="location.href='/view_cart'; this.classList.add('clicked')">View Cart</button>
+            <button onclick="location.href='/view_wishlist'; this.classList.add('clicked')">View Wishlist</button>
+            <button onclick="location.href='/update_customer_details'; this.classList.add('clicked')">Update Details</button>
         </div>
     </div>
-<script>
-    function handleButtonClick(url, button) {
-        button.classList.add('clicked');
-        window.location.href = url;
-    }
-</script>    
 </body>
 </html>

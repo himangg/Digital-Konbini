@@ -21,14 +21,14 @@ def login_admin(admin_mail,password):
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
-                return ["Mail incorrect",None]
+                return "Mail incorrect"
             else:
                 if x[0][2]==password:
                     connection.close()
                     return ["Success",x[0][0]]
                 else:
                     connection.close()
-                    return ["Incorrect Password",None]
+                    return "Incorrect Password"
         except Exception as e:
             connection.close()
             return e
@@ -86,14 +86,14 @@ def login_customer(customer_mobile,password):
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
-                return ["Mobile incorrect",None]
+                return "Mobile incorrect"
             else:
                 if x[0][2]==password:
                     connection.close()
                     return ["Success",x[0][0]]
                 else:
                     connection.close()
-                    return ["Incorrect Password",None]
+                    return "Incorrect Password"
         except Exception as e:
             connection.close()
             return e
@@ -116,14 +116,14 @@ def login_supplier(password,supplier_mail="",supplier_mobile=""):
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
-                return ["Mail/Mobile incorrect",None]
+                return "Mail/Mobile incorrect"
             else:
                 if x[0][2]==password:
                     connection.close()
                     return ["Success",x[0][0]]
                 else:
                     connection.close()
-                    return ["Incorrect Password",None]
+                    return "Incorrect Password"
         except Exception as e:
             connection.close()
             return e
@@ -414,13 +414,13 @@ def display_cart(customer_id):           #Returns cart of a customer
 
 def show_supplier_inventory(supplier_id):      #Returns all products and details that are supplied by a specific supplier
     '''
-    Returns a list of (Product_ID,Product name, price per unit, quantity left in stock, discount percentage offered by supplier himself) pairs.
+    Returns a list of (Product name, price per unit, quantity left in stock, discount percentage offered by supplier himself) pairs.
     Else returns error string
     '''
     connection=connectit()
     with connection.cursor() as cursor:
         try:
-            cursor.execute("select product_id,name,price*(100-discount_percentage)/100,quantity_remaining,discount_percentage from product where supplier_id=%s",supplier_id)
+            cursor.execute("select name,price*(100-discount_percentage)/100,quantity_remaining,discount_percentage from product where supplier_id=%s",supplier_id)
             connection.close()
             return cursor.fetchall()
         except Exception as e:
@@ -529,7 +529,7 @@ def remove_from_wishlist(customer_id,product_id):
             connection.close()
             return e
     
-def supplier_selling_report_for_supplier(supplier_id):     #for supplier : Gives a summary of which products are selling in how much quantity for a specific supplier
+def supplier_selling_report(supplier_id):     #for supplier : Gives a summary of which products are selling in how much quantity for a specific supplier
     '''
     Returns a list of (Product name, quantity sold so far) pairs.
     Else returns error string
@@ -627,7 +627,7 @@ def show_messages(supplier_id):             #To return all messages regarding pr
     with connection.cursor() as cursor:
         #Returns details of products whose quantity left is less than 10
         try:
-            cursor.execute("select message_id,p.name,p.price,p.quantity_remaining from messages m,product p where m.supplier_id=%s and p.product_id=m.product_id",supplier_id)
+            cursor.execute("select message_id,p.name,p.price,p.quantity_remaining from messages where supplier_id=%s",supplier_id)
             insufficient_products=cursor.fetchall()
             connection.close()
             return insufficient_products
@@ -728,14 +728,13 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
     '''
     Returns 
     'Success' if correct
-    -1 if payment not completed yet (payment_pid not typed)
     Else returns error string
     '''
     connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
-            if payment_pid==None:
+            if payment_pid=="":
                 return -1
             cursor.execute("select order_id,coupon_code_applied from orders where customer_id=%s and payment_date is null",customer_id)
             cart_id,coupon_code=cursor.fetchone()        
