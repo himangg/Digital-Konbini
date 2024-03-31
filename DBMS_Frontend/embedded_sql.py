@@ -719,12 +719,15 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
     '''
     Returns 
     'Success' if correct
+    -1 if payment not completed yet (payment_pid not typed)
     Else returns error string
     '''
     connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
+            if payment_pid=="":
+                return -1
             cursor.execute("select order_id,coupon_code_applied from orders where customer_id=%s and payment_date is null",customer_id)
             cart_id,coupon_code=cursor.fetchone()        
             if coupon_code==None:
