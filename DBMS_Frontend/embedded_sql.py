@@ -298,9 +298,7 @@ def new_coupon(admin_id,flat_discount,min_cart_value,code):
             connection.rollback()
             connection.close()
             return e
-#    ---trigger on this condition too
 
-# def display_coupons()                  ---trigger instead
 
 def delete_coupon(coupon_code):
     '''
@@ -429,7 +427,7 @@ def update_inventory_product(product_id,new_quantity="",new_price="",new_details
         connection.begin()
         try:
             if new_quantity!="":
-                cursor.execute("update product set quantity=%s where product_id=%s",(new_quantity,product_id))
+                cursor.execute("update product set quantity_remaining=%s where product_id=%s",(new_quantity,product_id))
             if new_price!="":
                 cursor.execute("update product set price=%s where product_id=%s",(new_price,product_id))
             if new_price!="":
@@ -751,3 +749,4 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
 # register_customer("Himang","1234567890","Himang","abc")
 # print(product_search(name="chicken"))
 # print(add_product_to_cart(4,4,1))
+# print(update_inventory_product(1,1,1,"",1))
