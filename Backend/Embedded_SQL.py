@@ -2,7 +2,7 @@ import pymysql as pm
 #--------------------------------------------------------------------------------------------
 
 def connectit():
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
+    connection = pm.connect(host="localhost", user="root", password="himang", database="digital_konbini")
     connection.autocommit=False
     return connection
 
@@ -21,14 +21,14 @@ def login_admin(admin_mail,password):
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
-                return "Mail incorrect"
+                return ["Mail incorrect",None]
             else:
                 if x[0][2]==password:
                     connection.close()
                     return ["Success",x[0][0]]
                 else:
                     connection.close()
-                    return "Incorrect Password"
+                    return ["Incorrect Password",None]
         except Exception as e:
             connection.close()
             return e
@@ -86,14 +86,14 @@ def login_customer(customer_mobile,password):
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
-                return "Mobile incorrect"
+                return ["Mobile incorrect",None]
             else:
                 if x[0][2]==password:
                     connection.close()
                     return ["Success",x[0][0]]
                 else:
                     connection.close()
-                    return "Incorrect Password"
+                    return ["Incorrect Password",None]
         except Exception as e:
             connection.close()
             return e
@@ -116,14 +116,14 @@ def login_supplier(password,supplier_mail="",supplier_mobile=""):
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
-                return "Mail/Mobile incorrect"
+                return ["Mail/Mobile incorrect",None]
             else:
                 if x[0][2]==password:
                     connection.close()
                     return ["Success",x[0][0]]
                 else:
                     connection.close()
-                    return "Incorrect Password"
+                    return ["Incorrect Password",None]
         except Exception as e:
             connection.close()
             return e
@@ -520,7 +520,7 @@ def remove_from_wishlist(customer_id,product_id):
             connection.close()
             return e
     
-def supplier_selling_report(supplier_id):     #for supplier : Gives a summary of which products are selling in how much quantity for a specific supplier
+def supplier_selling_report_for_supplier(supplier_id):     #for supplier : Gives a summary of which products are selling in how much quantity for a specific supplier
     '''
     Returns a list of (Product name, quantity sold so far) pairs.
     Else returns error string
@@ -748,6 +748,3 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
 # register_customer("Himang","1234567890","Himang","abc")
 # print(product_search(name="chicken"))
 # print(add_product_to_cart(4,4,1))
-# print(remove_product_from_cart(7,2))
-# print(login_supplier( supplier_mail="velit.sed@hotmail.net",password="SKA35NOH4QN"))
-# print(show_messages(1))
