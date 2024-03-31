@@ -393,13 +393,22 @@ def display_cart(customer_id):           #Returns cart of a customer
     '''
     connection=connectit()
     with connection.cursor() as cursor:
+        connection.begin()
         try:
             cursor.execute("select order_id from orders where customer_id=%s and payment_date is null",customer_id)
-            cart_id=cursor.fetchone()[0]
+            result=cursor.fetchone()
+            if result!=None:
+                cart_id=result[0]
+            else:
+                cursor.execute("insert into orders(Customer_ID) values (%s)",customer_id)
+                cursor.execute("select order_id from orders where customer_id=%s and payment_date is null",customer_id)
+                cart_id=cursor.fetchone()[0]
             cursor.execute("select p1.product_id,name,category,quantity,price*(100-discount_percentage)/100*quantity 'Amount' from product p1,product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",cart_id)
+            connection.commit()
             connection.close()
             return cursor.fetchall()
         except Exception as e:
+            connection.rollback()
             connection.close()
             return e
 
@@ -429,7 +438,7 @@ def update_inventory_product(product_id,new_quantity="",new_price="",new_details
         connection.begin()
         try:
             if new_quantity!="":
-                cursor.execute("update product set quantity=%s where product_id=%s",(new_quantity,product_id))
+                cursor.execute("update product set quantity_remaining=%s where product_id=%s",(new_quantity,product_id))
             if new_price!="":
                 cursor.execute("update product set price=%s where product_id=%s",(new_price,product_id))
             if new_price!="":
@@ -668,11 +677,11 @@ def cart_price_to_be_payed(customer_id):           #To fetch the total amount to
             values=cursor.fetchall()
             ids=tuple([x[1] for x in values])
             cursor.executemany("update product set quantity_remaining=quantity_remaining-%s where product_id=%s",values)
-            cursor.execute("select quantity_remaining from product where product_id=%s",ids)
+            cursor.executemany("select quantity_remaining from product where product_id=%s",ids)
             qty_rems=cursor.fetchall()
             ids_insufficient=[]
             for i in range(len(qty_rems)):
-                if qty_rems[i]<0:
+                if qty_rems[0][i]<0:
                     ids_insufficient.append((ids[i],cart_id))
             if len(ids_insufficient)!=0:
                 raise Quantity_Error("Quantity_Error")
@@ -683,7 +692,7 @@ def cart_price_to_be_payed(customer_id):           #To fetch the total amount to
                 cursor.execute("select sum(price*(100-discount_percentage)/100*quantity)-(select flat_discount from coupons where code=%s) from product p1, product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",(coupon_code,cart_id))
             connection.commit()
             connection.close()
-            return cursor.fetchone()[0],values          #First value is total price. 2nd value is to be held.
+            return cursor.fetchone()[0],values        #First value is total price. 2nd value is to be held.
             #In case customer cancels payment at this stage call cancel_cart_purchase and enter values as parameter
         except Quantity_Error as f:
             connection.rollback()
@@ -726,7 +735,7 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
     with connection.cursor() as cursor:
         connection.begin()
         try:
-            if payment_pid=="":
+            if payment_pid==None:
                 return -1
             cursor.execute("select order_id,coupon_code_applied from orders where customer_id=%s and payment_date is null",customer_id)
             cart_id,coupon_code=cursor.fetchone()        
