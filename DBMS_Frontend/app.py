@@ -298,28 +298,22 @@ def check_alerts():
 # Route for clearing the message
 @app.route('/clear_message/<int:message_id>', methods=['POST'])
 def clear_message(message_id):
-    # Logic to clear the message
-    # This could involve updating the database or any other operation
-    # For example:
-    # clear_message_from_database(message_id)
-    
-    # After clearing the message, redirect back to the same page
+    backend.clear_message(message_id)
     return redirect('/check_alerts')
 
 # Route to view inventory products
 @app.route('/view_inventory')
 def view_inventory():
     # Hardcoded sample data for inventory products
-    inventory_products = [
-        {"id": 1, "name": "Product 1", "price": 10.99, "quantity": 100, "discount_percentage": 5},
-        {"id": 2, "name": "Product 2", "price": 20.49, "quantity": 50, "discount_percentage": 0},
-        {"id": 3, "name": "Product 3", "price": 15.99, "quantity": 80, "discount_percentage": 10}
-    ]
-    return render_template('view_inventory.html', inventory_products=inventory_products)
+    result=backend.show_supplier_inventory(session.get('current_user_id'))
+    print(result)
+    return render_template('view_inventory.html', inventory_products=result)
 
 # Route to delete an inventory product
-@app.route('/delete_inventory_product/<int:product_id>')
+@app.route('/delete_inventory_product/<int:product_id>',methods=['POST'])
 def delete_inventory_product(product_id):
+    result=backend.delete_inventory_product1(product_id)
+    print(result,product_id)
     # Logic to delete the inventory product with the given ID
     return "Inventory product deleted successfully."
 

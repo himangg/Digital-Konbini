@@ -86,19 +86,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Bind click event to all clear buttons with class "clear-btn"
             $('.clear-btn').click(function() {
                 var messageId = $(this).data('message-id'); // Retrieve the message ID from the data attribute
-                // Make an AJAX request to clear the alert message
                 $.ajax({
                     type: 'POST',
                     url: '/clear_message/' + messageId, // Assuming this is the endpoint to clear a message
                     success: function(response) {
-                        // Remove the corresponding row from the table upon successful clearing
                         $('[data-message-id="' + messageId + '"]').closest('tr').remove();
                     },
                     error: function(xhr, status, error) {
-                        // Handle errors if any
                         console.error(xhr.responseText);
                     }
                 });
