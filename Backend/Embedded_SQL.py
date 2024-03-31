@@ -665,12 +665,12 @@ def cart_price_to_be_payed(customer_id):           #To fetch the total amount to
             cursor.execute("select quantity, product_id from product_order_bridge_table where order_id=%s",cart_id)
             values=cursor.fetchall()
             ids=tuple([x[1] for x in values])
-            cursor.executemany("update product set quantity_remaining=quantity_remaining-%s where product_id=%s",values)
-            cursor.execute("select quantity_remaining from product where product_id=%s",ids)
+            cursor.executemany("update product set quantity_remaining=quantity_remaining - %s where product_id=%s",values)
+            cursor.executemany("select quantity_remaining from product where product_id=%s",ids)
             qty_rems=cursor.fetchall()
             ids_insufficient=[]
             for i in range(len(qty_rems)):
-                if qty_rems[0][i]<0:
+                if qty_rems[i][0]<0:
                     ids_insufficient.append((ids[i],cart_id))
             if len(ids_insufficient)!=0:
                 raise Quantity_Error("Quantity_Error")
@@ -753,4 +753,5 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
 # new_inventory_product(1,"abc","abc",2,2,"",0)
 # delete_inventory_product(12)
 # add_product_to_cart(3,1,2)
-print(cart_price_to_be_payed(1))
+# add_product_to_cart(4,1,2)
+# print(cart_price_to_be_payed(1))
