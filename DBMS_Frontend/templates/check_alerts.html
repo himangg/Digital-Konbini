@@ -72,17 +72,34 @@
             <tbody>
                 {% for alert in alerts %}
                     <tr>
-                        <td>{{ alert.message_id }}</td>
-                        <td>{{ alert.product_name }}</td>
-                        <td>{{ alert.price }}</td>
-                        <td>{{ alert.quantity_remaining }}</td>
-                        <td><form action="/clear_message/{{ alert.message_id }}" method="post">
-                            <button class="clear-btn" type="submit">Clear</button>
-                        </form></td>
-                    </tr>
+                        <td>{{ alert[0] }}</td>
+                        <td>{{ alert[1] }}</td>
+                        <td>{{ alert[2] }}</td>
+                        <td>{{ alert[3] }}</td>
+                        <td>
+                            <button class="clear-btn" data-message-id="{{ alert[0] }}">Clear</button></td>
+                        </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.clear-btn').click(function() {
+                var messageId = $(this).data('message-id'); // Retrieve the message ID from the data attribute
+                $.ajax({
+                    type: 'POST',
+                    url: '/clear_message/' + messageId, // Assuming this is the endpoint to clear a message
+                    success: function(response) {
+                        $('[data-message-id="' + messageId + '"]').closest('tr').remove();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

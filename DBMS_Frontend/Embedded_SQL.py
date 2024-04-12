@@ -21,14 +21,14 @@ def login_admin(admin_mail,password):
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
-                return "Mail incorrect"
+                return ["Mail incorrect",None]
             else:
                 if x[0][2]==password:
                     connection.close()
                     return ["Success",x[0][0]]
                 else:
                     connection.close()
-                    return "Incorrect Password"
+                    return ["Incorrect Password",None]
         except Exception as e:
             connection.close()
             return e
@@ -86,14 +86,14 @@ def login_customer(customer_mobile,password):
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
-                return "Mobile incorrect"
+                return ["Mobile incorrect",None]
             else:
                 if x[0][2]==password:
                     connection.close()
                     return ["Success",x[0][0]]
                 else:
                     connection.close()
-                    return "Incorrect Password"
+                    return ["Incorrect Password",None]
         except Exception as e:
             connection.close()
             return e
@@ -116,14 +116,14 @@ def login_supplier(password,supplier_mail="",supplier_mobile=""):
             x=cursor.fetchall()
             if len(x)==0:
                 connection.close()
-                return "Mail/Mobile incorrect"
+                return ["Mail/Mobile incorrect",None]
             else:
                 if x[0][2]==password:
                     connection.close()
                     return ["Success",x[0][0]]
                 else:
                     connection.close()
-                    return "Incorrect Password"
+                    return ["Incorrect Password",None]
         except Exception as e:
             connection.close()
             return e
@@ -298,9 +298,7 @@ def new_coupon(admin_id,flat_discount,min_cart_value,code):
             connection.rollback()
             connection.close()
             return e
-#    ---trigger on this condition too
 
-# def display_coupons()                  ---trigger instead
 
 def delete_coupon(coupon_code):
     '''
@@ -414,13 +412,13 @@ def display_cart(customer_id):           #Returns cart of a customer
 
 def show_supplier_inventory(supplier_id):      #Returns all products and details that are supplied by a specific supplier
     '''
-    Returns a list of (Product name, price per unit, quantity left in stock, discount percentage offered by supplier himself) pairs.
+    Returns a list of (Product_ID,Product name, price per unit, quantity left in stock, discount percentage offered by supplier himself) pairs.
     Else returns error string
     '''
     connection=connectit()
     with connection.cursor() as cursor:
         try:
-            cursor.execute("select name,price*(100-discount_percentage)/100,quantity_remaining,discount_percentage from product where supplier_id=%s",supplier_id)
+            cursor.execute("select product_id,name,price*(100-discount_percentage)/100,quantity_remaining,discount_percentage from product where supplier_id=%s",supplier_id)
             connection.close()
             return cursor.fetchall()
         except Exception as e:
@@ -529,7 +527,7 @@ def remove_from_wishlist(customer_id,product_id):
             connection.close()
             return e
     
-def supplier_selling_report(supplier_id):     #for supplier : Gives a summary of which products are selling in how much quantity for a specific supplier
+def supplier_selling_report_for_supplier(supplier_id):     #for supplier : Gives a summary of which products are selling in how much quantity for a specific supplier
     '''
     Returns a list of (Product name, quantity sold so far) pairs.
     Else returns error string
@@ -627,7 +625,7 @@ def show_messages(supplier_id):             #To return all messages regarding pr
     with connection.cursor() as cursor:
         #Returns details of products whose quantity left is less than 10
         try:
-            cursor.execute("select message_id,p.name,p.price,p.quantity_remaining from messages where supplier_id=%s",supplier_id)
+            cursor.execute("select message_id,p.name,p.price,p.quantity_remaining from messages m,product p where m.supplier_id=%s and p.product_id=m.product_id",supplier_id)
             insufficient_products=cursor.fetchall()
             connection.close()
             return insufficient_products
@@ -661,7 +659,7 @@ class Quantity_Error(Exception):
 def cart_price_to_be_payed(customer_id):           #To fetch the total amount to be paid by customer for his cart (Please read comment inside function for crucial details)
     '''
     Returns 
-    A tuple having -> (total price to be payed,a tuple containing some values) .....the values returned are of no use to frontend. But in case the customer presses cancel button at the buy cart page instead of entering the PID then call cancel_cart_purchase() function and pass this values tuple to it as parameter
+    A tuple having -> (total price to be payed,a tuple containing some values,coupon code applied) .....the values returned are of no use to frontend. But in case the customer presses cancel button at the buy cart page instead of entering the PID then call cancel_cart_purchase() function and pass this values tuple to it as parameter
     'Quantity_Error' if insufficient quantities left to fulfill order (in this case redirect to cart page)
     Else returns error string
     '''
@@ -676,12 +674,12 @@ def cart_price_to_be_payed(customer_id):           #To fetch the total amount to
             cursor.execute("select quantity, product_id from product_order_bridge_table where order_id=%s",cart_id)
             values=cursor.fetchall()
             ids=tuple([x[1] for x in values])
-            cursor.executemany("update product set quantity_remaining=quantity_remaining-%s where product_id=%s",values)
+            cursor.executemany("update product set quantity_remaining=quantity_remaining - %s where product_id=%s",values)
             cursor.executemany("select quantity_remaining from product where product_id=%s",ids)
             qty_rems=cursor.fetchall()
             ids_insufficient=[]
             for i in range(len(qty_rems)):
-                if qty_rems[0][i]<0:
+                if qty_rems[i][0]<0:
                     ids_insufficient.append((ids[i],cart_id))
             if len(ids_insufficient)!=0:
                 raise Quantity_Error("Quantity_Error")
@@ -692,7 +690,7 @@ def cart_price_to_be_payed(customer_id):           #To fetch the total amount to
                 cursor.execute("select sum(price*(100-discount_percentage)/100*quantity)-(select flat_discount from coupons where code=%s) from product p1, product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",(coupon_code,cart_id))
             connection.commit()
             connection.close()
-            return cursor.fetchone()[0],values        #First value is total price. 2nd value is to be held.
+            return cursor.fetchone()[0],values,coupon_code          #First value is total price. 2nd value is to be held.
             #In case customer cancels payment at this stage call cancel_cart_purchase and enter values as parameter
         except Quantity_Error as f:
             connection.rollback()
@@ -724,17 +722,19 @@ def cancel_cart_purchase(values):           #If user presses cancel button on pu
             connection.close()
             return e
 
-def cart_purchase(payment_pid,customer_id):          #If user presses proceed on purchase cart page
+def cart_purchase(payment_pid,customer_id,values):          #If user presses proceed on purchase cart page
     '''
     Returns 
     'Success' if correct
+    -1 if payment not completed yet (payment_pid not typed)
     Else returns error string
     '''
     connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
-            if payment_pid=="":
+            if payment_pid==None:
+                cancel_cart_purchase(values)
                 return -1
             cursor.execute("select order_id,coupon_code_applied from orders where customer_id=%s and payment_date is null",customer_id)
             cart_id,coupon_code=cursor.fetchone()        
@@ -747,7 +747,9 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
             connection.commit()
             connection.close()
             return "Success"
-        except Exception as e:        
+        except Exception as e:
+            print(e)
+            cancel_cart_purchase(values)
             connection.rollback()
             connection.close()
             return e
@@ -759,3 +761,9 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
 # register_customer("Himang","1234567890","Himang","abc")
 # print(product_search(name="chicken"))
 # print(add_product_to_cart(4,4,1))
+# print(update_inventory_product(1,1,1,"",1))
+# new_inventory_product(1,"abc","abc",2,2,"",0)
+# delete_inventory_product(12)
+# add_product_to_cart(3,1,2)
+# add_product_to_cart(4,1,2)
+# print(cart_price_to_be_payed(1))
