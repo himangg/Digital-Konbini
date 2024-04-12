@@ -62,7 +62,7 @@
         <div class="wishlist-items">
             {% if wishlist_items %}
                 {% for item in wishlist_items %}
-                    <div class="item">{{ item.name }} - {{ item.price }}
+                    <div class="item">{{ item[1] }} - {{ item[4] }}
                         <button onclick="location.href='/delete_from_cart'">Delete Product</button>
 
                     </div>
@@ -72,9 +72,7 @@
             {% endif %}
         </div>
         <div class="buttons">
-            <button onclick="location.href='/add_to_wishlist'">Add Product to Wishlist</button>
-            <button onclick="location.href='/add_to_cart'">Add Product to Cart</button>
-
+            <button onclick="location.href='/add_to_cart'">Add Products to Cart</button>
         </div>
     </div>
 </body>

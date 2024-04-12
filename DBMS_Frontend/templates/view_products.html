@@ -46,7 +46,9 @@
             margin-bottom: 20px; /* Added margin bottom */
         }
 
-        input[type="text"] {
+        input[type="text"],
+        input[type="number"],
+        select {
             padding: 8px;
             margin-right: 5px;
             border: 1px solid #ccc;
@@ -88,16 +90,25 @@
 <body>
     <div class="container">
         <h1>View Products</h1>
+        <!-- Search bar and filters -->
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Search by name...">
+            <select id="categoryFilter">
+                <option value="">All</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Books">Books</option>
+                <!-- Add more options as needed -->
+            </select>
+            <label for="minPrice">Min Price:</label>
+            <input type="number" id="minPrice" min="0">
+            <label for="maxPrice">Max Price:</label>
+            <input type="number" id="maxPrice" min="0">
             <button onclick="searchAndCallFunction()">Search</button>
         </div>
-        <!-- Quantity input below search bar -->
-        <div class="quantity-container">
-            <label for="quantityInput" class="quantity-label">Quantity:</label>
-            <input type="number" id="quantityInput" class="quantity-input" value="1" min="1">
-        </div>
-        <table>
+        <!-- Product table -->
+        <table id="productTable">
+            <!-- Table headers -->
             <thead>
                 <tr>
                     <th>Name</th>
@@ -107,56 +118,49 @@
                     <th></th>
                 </tr>
             </thead>
+            <!-- Table body will be dynamically populated -->
             <tbody>
-                {% if products %}
-                    {% for product in products %}
-                        <tr>
-                            <td>{{ product[1] }}</td>
-                            <td>{{ product[2] }}</td>
-                            <td>{{ product[3] }}</td>
-                            <td>{{ product[4] }}</td>
-                            <td><button onclick="addToCart('{{ product[0] }}')">Add to Cart</button></td>
-                        </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="5">No products available.</td>
-                    </tr>
-                {% endif %}
             </tbody>
         </table>
     </div>
 
+    <!-- JavaScript -->
     <script>
-        function addToCart(productId) {
-            // Retrieve quantity input value
-            var quantityInput = document.getElementById('quantityInput');
-            var quantity = quantityInput.value;
+        // Function to load products initially and on search
+        function loadProducts() {
+            var searchInput = document.getElementById('searchInput').value;
+            var categoryFilter = document.getElementById('categoryFilter').value;
+            var minPrice = document.getElementById('minPrice').value;
+            var maxPrice = document.getElementById('maxPrice').value;
 
-            // Send AJAX request
+            // AJAX request to fetch products based on filters
             $.ajax({
-                url: '/add_to_cart',
-                type: 'POST',
+                url: '/view_products',
+                type: 'GET',
                 data: {
-                    'product_id': productId,
-                    'quantity': quantity
+                    'name': searchInput,
+                    'category': categoryFilter,
+                    'min_price': minPrice,
+                    'max_price': maxPrice
                 },
                 success: function(response) {
-                    console.log(response);
-                    // You can perform further actions here if needed, such as showing a success message to the user
+                    // Update the product table with the new data
+                    $('#productTable tbody').html(response);
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
-                    // Handle errors here if needed
                 }
             });
         }
 
+        // Load products initially
+        $(document).ready(function() {
+            loadProducts();
+        });
+
+        // Search button click event handler
         function searchAndCallFunction() {
-            // Retrieve search input value
-            var searchInput = document.getElementById('searchInput').value;
-            // Call your search function with searchInput value
-            console.log("Search button clicked with input: " + searchInput);
+            loadProducts();
         }
     </script>
 </body>
