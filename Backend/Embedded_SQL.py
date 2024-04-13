@@ -301,14 +301,14 @@ def new_coupon(admin_id,flat_discount,min_cart_value,code):
 
 def display_wishlist(customer_id):
     '''
-    Returns a list containing (Product name, product category, Sale Price) pairs.
+    Returns a list containing (Product_ID,Product name, product category, Sale Price) pairs.
     Else returns error string
     '''
     connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
-            cursor.execute("select p.name,p.category,price*(100-discount_percentage)/100 'Sale Price' from product p,wishlist_customer_product_bridge_table w where p.product_id=w.product_id and customer_id=%s",customer_id)
+            cursor.execute("select p.product_id,p.name,p.category,price*(100-discount_percentage)/100 'Sale Price' from product p,wishlist_customer_product_bridge_table w where p.product_id=w.product_id and customer_id=%s",customer_id)
             connection.close()
             return cursor.fetchall()
         except Exception as e:
