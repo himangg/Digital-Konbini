@@ -2,7 +2,7 @@ import pymysql as pm
 #--------------------------------------------------------------------------------------------
 
 def connectit():
-    connection = pm.connect(host="localhost", user="root", password="himang", database="digital_konbini")
+    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
     connection.autocommit=False
     return connection
 
@@ -699,7 +699,7 @@ class Quantity_Error(Exception):
 def cart_price_to_be_payed(customer_id):           #To fetch the total amount to be paid by customer for his cart (Please read comment inside function for crucial details)
     '''
     Returns 
-    A tuple having -> (total price to be payed,a tuple containing some values) .....the values returned are of no use to frontend. But in case the customer presses cancel button at the buy cart page instead of entering the PID then call cancel_cart_purchase() function and pass this values tuple to it as parameter
+    A tuple having -> (total price to be payed,a tuple containing some values,coupon code applied) .....the values returned are of no use to frontend. But in case the customer presses cancel button at the buy cart page instead of entering the PID then call cancel_cart_purchase() function and pass this values tuple to it as parameter
     'Quantity_Error' if insufficient quantities left to fulfill order (in this case redirect to cart page)
     Else returns error string
     '''
@@ -730,7 +730,7 @@ def cart_price_to_be_payed(customer_id):           #To fetch the total amount to
                 cursor.execute("select sum(price*(100-discount_percentage)/100*quantity)-(select flat_discount from coupons where code=%s) from product p1, product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",(coupon_code,cart_id))
             connection.commit()
             connection.close()
-            return cursor.fetchone()[0],values          #First value is total price. 2nd value is to be held.
+            return cursor.fetchone()[0],values,coupon_code          #First value is total price. 2nd value is to be held.
             #In case customer cancels payment at this stage call cancel_cart_purchase and enter values as parameter
         except Quantity_Error as f:
             connection.rollback()
@@ -762,7 +762,7 @@ def cancel_cart_purchase(values):           #If user presses cancel button on pu
             connection.close()
             return e
 
-def cart_purchase(payment_pid,customer_id):          #If user presses proceed on purchase cart page
+def cart_purchase(payment_pid,customer_id,values):          #If user presses proceed on purchase cart page
     '''
     Returns 
     'Success' if correct
@@ -774,6 +774,7 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
         connection.begin()
         try:
             if payment_pid==None:
+                cancel_cart_purchase(values)
                 return -1
             cursor.execute("select order_id,coupon_code_applied from orders where customer_id=%s and payment_date is null",customer_id)
             cart_id,coupon_code=cursor.fetchone()        
@@ -786,7 +787,8 @@ def cart_purchase(payment_pid,customer_id):          #If user presses proceed on
             connection.commit()
             connection.close()
             return "Success"
-        except Exception as e:        
+        except Exception as e:   
+            cancel_cart_purchase(values)
             connection.rollback()
             connection.close()
             return e
