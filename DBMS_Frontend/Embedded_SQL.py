@@ -301,14 +301,14 @@ def new_coupon(admin_id,flat_discount,min_cart_value,code):
 
 def display_wishlist(customer_id):
     '''
-    Returns a list containing (Product name, product category, Sale Price) pairs.
+    Returns a list containing (Product_ID,Product name, product category, Sale Price) pairs.
     Else returns error string
     '''
     connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
         try:
-            cursor.execute("select p.Product_ID,p.name,p.category,price*(100-discount_percentage)/100 'Sale Price' from product p,wishlist_customer_product_bridge_table w where p.product_id=w.product_id and customer_id=%s",customer_id)
+            cursor.execute("select p.product_id,p.name,p.category,price*(100-discount_percentage)/100 'Sale Price' from product p,wishlist_customer_product_bridge_table w where p.product_id=w.product_id and customer_id=%s",customer_id)
             connection.close()
             return cursor.fetchall()
         except Exception as e:
@@ -538,7 +538,7 @@ def add_to_wishlist(customer_id,product_id):
         connection.begin()
         try:
             cursor.execute("select * from wishlist_customer_product_bridge_table where customer_id=%s and product_id=%s",(customer_id,product_id))
-            if cursor.fetchall()!=None:
+            if cursor.fetchall()==None:
                 cursor.execute("insert into wishlist_customer_product_bridge_table(customer_id,product_id) values(%s,%s)",(customer_id,product_id))
                 connection.commit()
             connection.close()
@@ -808,3 +808,5 @@ def cart_purchase(payment_pid,customer_id,values):          #If user presses pro
 # print(cart_price_to_be_payed(1))
 # print(display_wishlist(2))
 # print(buy_wishlist(4))
+# print(add_to_wishlist(2,1))
+# print(add_to_wishlist(2,1))
