@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Products</title>
@@ -56,7 +57,7 @@
         <h1>View Products</h1>
         <form class="search-container" action="/view_products" method="get">
             <input type="text" id="searchInput" name="name" placeholder="Search by name...">
-            <input type="text" id="SupplierInput" name="supp_name" placeholder="Search by Supplier name...">
+            <input type="text" id="category" name="category" placeholder="Search by category...">
             <label for="minPrice">Min Price:</label>
             <input type="number" id="minPrice" name="min_price" min="0">
             <label for="maxPrice">Max Price:</label>

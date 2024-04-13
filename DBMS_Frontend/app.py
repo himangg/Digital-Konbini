@@ -181,8 +181,6 @@ def view_products():
     name = request.args.get('name', '')
     min_price = request.args.get('min_price', '')
     max_price = request.args.get('max_price', '')
-    
-    # Convert price inputs only if they are valid numbers
     if min_price.isdigit():
         min_price = float(min_price)
     else:
@@ -192,17 +190,10 @@ def view_products():
         max_price = float(max_price)
     else:
         max_price = ""
-
-    # Call the backend function with potential filters
-    # If no filters are provided, it should return all products
     products = backend.product_search(category=category, name=name, price_range_lower=min_price, price_range_upper=max_price)
-
-    # Handle the result from backend function
     if isinstance(products, tuple) or isinstance(products, set):
-        # Correct handling if products is a tuple or set (either products or empty tuple)
         return render_template('view_products.html', products=products)
     else:
-        # This handles the scenario where an error string is returned
         error_message = str(products)
         return render_template('view_products.html', error=error_message, products=[])
 
