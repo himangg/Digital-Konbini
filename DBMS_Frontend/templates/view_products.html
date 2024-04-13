@@ -90,6 +90,7 @@
                         <td>{{ product[7] }}</td>
                         <td><input type="number" id="quantityInput{{ product[0] }}" name="quantity" min="1" value="1"></td>
                         <td><button onclick="addToCart('{{ product[0] }}', document.getElementById('quantityInput{{ product[0] }}').value)">Add to Cart</button></td>
+                        <td><button onclick="addToWishlist('{{ product[0] }}', document.getElementById('quantityInput{{ product[0] }}').value)">Add to Wishlist</button></td>
                     </tr>
                 {% else %}
                     <tr>
@@ -114,6 +115,24 @@
                 },
                 error: function(xhr, status, error) {
                     console.error("Error adding to cart:", error);
+                    // Optionally handle errors, such as displaying an error message to the user
+                }
+            });
+        }
+        function addToWishlist(productId, quantity) {
+            $.ajax({
+                url: '/add_to_wishlist',
+                type: 'POST',
+                data: {
+                    'product_id': productId,
+                    'quantity': quantity
+                },
+                success: function(response) {
+                    console.log("Added to wishlist:", response);
+                    // You can display a success message or update the cart count here
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error adding to wishlist:", error);
                     // Optionally handle errors, such as displaying an error message to the user
                 }
             });

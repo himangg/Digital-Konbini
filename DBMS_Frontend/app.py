@@ -215,6 +215,20 @@ def add_to_cart():
             return "Product quantity not available in stock!"
         else:
             return "Product added to cart successfully!"
+        
+@app.route('/add_to_wishlist', methods=['POST'])
+def add_to_wishlist():
+    print("add to wishlist")
+    if request.method == 'POST':
+        product_id = request.form['product_id']
+        print(product_id)
+        current_user_id = session.get('current_user_id')
+        result=backend.add_to_wishlist(current_user_id,product_id)
+        print(result)
+        if(result == -1):
+            return "Product quantity not available in stock!"
+        else:
+            return "Product added to cart successfully!"
 
 @app.route('/view_past_orders')
 def view_orders():
@@ -245,6 +259,24 @@ def remove_from_cart():
         result=backend.remove_product_from_cart(product_id,current_user_id)
         print(result)
         return "Product removed from cart successfully!"
+    
+@app.route('/remove_from_wishlist', methods=['POST'])
+def remove_from_wishlist():
+    if request.method == 'POST':
+        print("remove from cart")
+        product_id = request.form['product_id']
+        current_user_id = session.get('current_user_id')
+        result=backend.remove_from_wishlist(current_user_id,product_id)
+        print(result)
+        return "Product removed from cart successfully!"
+    
+@app.route('/add_to_cart_from_wishlist')
+def add_to_cart_from_wishlist():
+    current_user_id=session.get('current_user_id')
+    result=backend.buy_wishlist(current_user_id)
+    print(result)
+    result=backend.display_cart(current_user_id)
+    return render_template('view_cart.html',cart_items=result)
 
 @app.route('/checkout')
 def checkout():
@@ -281,7 +313,8 @@ def view_wishlist():
         return "Please log in first to view your cart."
     else:
         # Proceed with retrieving cart items
-        result = backend.display_cart(current_user_id)
+        result = backend.display_wishlist(current_user_id)
+        # print(result)
         return render_template('view_wishlist.html', wishlist_items=result)
     
 

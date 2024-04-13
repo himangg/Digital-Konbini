@@ -308,7 +308,7 @@ def display_wishlist(customer_id):
     with connection.cursor() as cursor:
         connection.begin()
         try:
-            cursor.execute("select p.name,p.category,price*(100-discount_percentage)/100 'Sale Price' from product p,wishlist_customer_product_bridge_table w where p.product_id=w.product_id and customer_id=%s",customer_id)
+            cursor.execute("select p.Product_ID,p.name,p.category,price*(100-discount_percentage)/100 'Sale Price' from product p,wishlist_customer_product_bridge_table w where p.product_id=w.product_id and customer_id=%s",customer_id)
             connection.close()
             return cursor.fetchall()
         except Exception as e:
