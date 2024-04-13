@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Products</title>
     <style>
-        /* Add your CSS styles here */
         body {
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
@@ -16,16 +14,13 @@
             height: 100vh;
             margin: 0;
         }
-
         .container {
             text-align: center;
         }
-
         h1 {
             color: #333;
-            margin-bottom: 20px; /* Add margin bottom */
+            margin-bottom: 20px;
         }
-
         table {
             width: 80%;
             margin-top: 20px;
@@ -34,150 +29,93 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
         th, td {
             padding: 10px;
             border-bottom: 1px solid #ddd;
             text-align: center;
         }
-
-        .search-container {
-            margin-top: 20px;
-            margin-bottom: 20px; /* Added margin bottom */
-        }
-
-        input[type="text"],
-        input[type="number"],
-        select {
+        input[type="text"], input[type="number"], select, button {
             padding: 8px;
             margin-right: 5px;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-
         button {
-            padding: 8px 16px;
             background-color: #4CAF50;
             color: white;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
         }
-
         button:hover {
             background-color: #45a049;
-        }
-
-        /* Add styles for quantity input */
-        .quantity-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .quantity-label {
-            margin-right: 10px;
-        }
-
-        .quantity-input {
-            width: 50px;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>View Products</h1>
-        <!-- Search bar and filters -->
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search by name...">
-            <select id="categoryFilter">
-                <option value="">All</option>
-                <option value="Electronics">Electronics</option>
-                <option value="Clothing">Clothing</option>
-                <option value="Books">Books</option>
-                <!-- Add more options as needed -->
-            </select>
+        <form class="search-container" action="/view_products" method="get">
+            <input type="text" id="searchInput" name="name" placeholder="Search by name...">
+            <input type="text" id="SupplierInput" name="supp_name" placeholder="Search by Supplier name...">
             <label for="minPrice">Min Price:</label>
-            <input type="number" id="minPrice" min="0">
+            <input type="number" id="minPrice" name="min_price" min="0">
             <label for="maxPrice">Max Price:</label>
-            <input type="number" id="maxPrice" min="0">
-            <button onclick="searchAndCallFunction()">Search</button>
-        </div>
-        <!-- Product table -->
+            <input type="number" id="maxPrice" name="max_price" min="0">
+            <button type="submit">Search</button>
+        </form>
         <table id="productTable">
-            <!-- Table headers -->
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Category</th>
                     <th>Price</th>
                     <th>Sale Price</th>
+                    <th>Supplier Name</th>
+                    <th>Details</th>
+                    <th>Discount Percent</th>
+                    <th>Quantity</th>
                     <th></th>
                 </tr>
             </thead>
-            <!-- Table body will be dynamically populated -->
             <tbody>
-                {% if products %}
-                    {% for product in products %}
-                        <tr>
-                            <td>{{ product[1] }}</td>
-                            <td>{{ product[2] }}</td>
-                            <td>{{ product[3] }}</td>
-                            <td>{{ product[4] }}</td>
-                            <td><button onclick="addToCart('{{ product[0] }}')">Add to Cart</button></td>
-                        </tr>
-                    {% endfor %}
+                {% for product in products %}
+                    <tr>
+                        <td>{{ product[1] }}</td>
+                        <td>{{ product[2] }}</td>
+                        <td>{{ product[3] }}</td>
+                        <td>{{ product[4] }}</td>
+                        <td>{{ product[5] }}</td>
+                        <td>{{ product[6] }}</td>
+                        <td>{{ product[7] }}</td>
+                        <td><input type="number" id="quantityInput{{ product[0] }}" name="quantity" min="1" value="1"></td>
+                        <td><button onclick="addToCart('{{ product[0] }}', document.getElementById('quantityInput{{ product[0] }}').value)">Add to Cart</button></td>
+                    </tr>
                 {% else %}
                     <tr>
-                        <td colspan="5">No products available.</td>
+                        <td colspan="9">No products available.</td>
                     </tr>
-                {% endif %}
+                {% endfor %}
             </tbody>
         </table>
     </div>
-
-    <!-- JavaScript -->
     <script>
-        // Function to load products initially and on search
-        function loadProducts() {
-            var searchInput = document.getElementById('searchInput').value;
-            var categoryFilter = document.getElementById('categoryFilter').value;
-            var minPrice = document.getElementById('minPrice').value;
-            var maxPrice = document.getElementById('maxPrice').value;
-    
-            // AJAX request to fetch products based on filters
+        function addToCart(productId, quantity) {
             $.ajax({
-                url: '/view_products',
-                type: 'GET',
+                url: '/add_to_cart',
+                type: 'POST',
                 data: {
-                    'name': searchInput,
-                    'category': categoryFilter,
-                    'min_price': minPrice,
-                    'max_price': maxPrice
+                    'product_id': productId,
+                    'quantity': quantity
                 },
                 success: function(response) {
-                    // Clear the existing product table
-                    $('#productTable tbody').empty();
-                    // Append the new products
-                    $('#productTable tbody').append(response);
+                    console.log("Added to cart:", response);
+                    // You can display a success message or update the cart count here
                 },
                 error: function(xhr, status, error) {
-                    console.error(error);
+                    console.error("Error adding to cart:", error);
+                    // Optionally handle errors, such as displaying an error message to the user
                 }
             });
-        }
-    
-        // Load products initially
-        $(document).ready(function() {
-            loadProducts();
-        });
-    
-        // Search button click event handler
-        function searchAndCallFunction() {
-            loadProducts();
         }
     </script>
 </body>
