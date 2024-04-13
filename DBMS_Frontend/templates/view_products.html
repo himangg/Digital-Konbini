@@ -120,6 +120,21 @@
             </thead>
             <!-- Table body will be dynamically populated -->
             <tbody>
+                {% if products %}
+                    {% for product in products %}
+                        <tr>
+                            <td>{{ product[1] }}</td>
+                            <td>{{ product[2] }}</td>
+                            <td>{{ product[3] }}</td>
+                            <td>{{ product[4] }}</td>
+                            <td><button onclick="addToCart('{{ product[0] }}')">Add to Cart</button></td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5">No products available.</td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
@@ -132,7 +147,7 @@
             var categoryFilter = document.getElementById('categoryFilter').value;
             var minPrice = document.getElementById('minPrice').value;
             var maxPrice = document.getElementById('maxPrice').value;
-
+    
             // AJAX request to fetch products based on filters
             $.ajax({
                 url: '/view_products',
@@ -144,20 +159,22 @@
                     'max_price': maxPrice
                 },
                 success: function(response) {
-                    // Update the product table with the new data
-                    $('#productTable tbody').html(response);
+                    // Clear the existing product table
+                    $('#productTable tbody').empty();
+                    // Append the new products
+                    $('#productTable tbody').append(response);
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
                 }
             });
         }
-
+    
         // Load products initially
         $(document).ready(function() {
             loadProducts();
         });
-
+    
         // Search button click event handler
         function searchAndCallFunction() {
             loadProducts();
