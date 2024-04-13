@@ -262,7 +262,7 @@ def confirm_checkout():
     current_user_id = session.get('current_user_id')
     payment_pid = request.form.get('payment_id')
     print(payment_pid)
-    result=backend.cart_purchase(payment_pid=payment_pid,customer_id=current_user_id)
+    result=backend.cart_purchase(payment_pid=payment_pid,customer_id=current_user_id,values=session.get('values'))
     print(result)
     # session.pop('values', None)
     return "Order placed successfully!"
