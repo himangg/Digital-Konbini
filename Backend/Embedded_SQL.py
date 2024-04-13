@@ -2,7 +2,7 @@ import pymysql as pm
 #--------------------------------------------------------------------------------------------
 
 def connectit():
-    connection = pm.connect(host="localhost", user="root", password="Nishil", database="digital_konbini")
+    connection = pm.connect(host="localhost", user="root", password="himang", database="digital_konbini")
     connection.autocommit=False
     return connection
 
@@ -488,7 +488,7 @@ def new_inventory_product(supplier_id,name,category,price,quantity,details="",di
             connection.rollback()
             connection.close()
             return e
-
+    
 def add_to_wishlist(customer_id,product_id):
     '''
     Returns 
