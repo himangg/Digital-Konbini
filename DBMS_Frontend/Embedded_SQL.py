@@ -538,7 +538,7 @@ def add_to_wishlist(customer_id,product_id):
         connection.begin()
         try:
             cursor.execute("select * from wishlist_customer_product_bridge_table where customer_id=%s and product_id=%s",(customer_id,product_id))
-            if cursor.fetchall()==None:
+            if cursor.fetchall()==tuple():
                 cursor.execute("insert into wishlist_customer_product_bridge_table(customer_id,product_id) values(%s,%s)",(customer_id,product_id))
                 connection.commit()
             connection.close()
@@ -693,8 +693,8 @@ def clear_message(message_id):        #To delete a specific message
             return e
 
 class Quantity_Error(Exception):
-    def __init__(self, message):
-        super().__init__(message)
+    def _init_(self, message):
+        super()._init_(message)
 
 def cart_price_to_be_payed(customer_id):           #To fetch the total amount to be paid by customer for his cart (Please read comment inside function for crucial details)
     '''
@@ -809,4 +809,4 @@ def cart_purchase(payment_pid,customer_id,values):          #If user presses pro
 # print(display_wishlist(2))
 # print(buy_wishlist(4))
 # print(add_to_wishlist(2,1))
-# print(add_to_wishlist(2,1))
+# print(add_to_wishlist(10,1))
