@@ -299,6 +299,43 @@ def new_coupon(admin_id,flat_discount,min_cart_value,code):
             connection.close()
             return e
 
+def display_wishlist(customer_id):
+    '''
+    Returns a list containing (Product name, product category, Sale Price) pairs.
+    Else returns error string
+    '''
+    connection=connectit()
+    with connection.cursor() as cursor:
+        connection.begin()
+        try:
+            cursor.execute("select p.name,p.category,price*(100-discount_percentage)/100 'Sale Price' from product p,wishlist_customer_product_bridge_table w where p.product_id=w.product_id and customer_id=%s",customer_id)
+            connection.close()
+            return cursor.fetchall()
+        except Exception as e:
+            connection.close()
+            return e
+
+def buy_wishlist(customer_id):
+    '''
+    Returns Success if successful
+    Else returns error string
+    '''
+    connection=connectit()
+    with connection.cursor() as cursor:
+        connection.begin()
+        try:
+            cursor.execute("select product_id from wishlist_customer_product_bridge_table w where w.customer_id=%s",customer_id)
+            product_ids=cursor.fetchall()
+            for i in product_ids:
+                add_product_to_cart(i,customer_id)
+                remove_from_wishlist(customer_id,i)
+            connection.commit()
+            connection.close()
+            return "Success"
+        except Exception as e:
+            connection.rollback()
+            connection.close()
+            return e
 
 def delete_coupon(coupon_code):
     '''
@@ -353,6 +390,7 @@ def add_product_to_cart(product_id,customer_id,quantity=1):
                 else:
                     cursor.execute("insert into product_order_bridge_table(Order_Id,Product_ID,Quantity) values(%s,%s,%s)",(cart_id,product_id,new_quantity))
             else:
+                connection.commit()
                 connection.close()
                 return -1
             connection.commit()
@@ -488,7 +526,7 @@ def new_inventory_product(supplier_id,name,category,price,quantity,details="",di
             connection.rollback()
             connection.close()
             return e
-    
+
 def add_to_wishlist(customer_id,product_id):
     '''
     Returns 
@@ -499,8 +537,10 @@ def add_to_wishlist(customer_id,product_id):
     with connection.cursor() as cursor:
         connection.begin()
         try:
-            cursor.execute("insert into wishlist_customer_product_bridge_table(customer_id,product_id) values(%s,%s)",(customer_id,product_id))
-            connection.commit()
+            cursor.execute("select * from wishlist_customer_product_bridge_table where customer_id=%s and product_id=%s",(customer_id,product_id))
+            if cursor.fetchall()!=None:
+                cursor.execute("insert into wishlist_customer_product_bridge_table(customer_id,product_id) values(%s,%s)",(customer_id,product_id))
+                connection.commit()
             connection.close()
             return "Success"
         except Exception as e:
@@ -747,8 +787,7 @@ def cart_purchase(payment_pid,customer_id,values):          #If user presses pro
             connection.commit()
             connection.close()
             return "Success"
-        except Exception as e:
-            print(e)
+        except Exception as e:   
             cancel_cart_purchase(values)
             connection.rollback()
             connection.close()
@@ -767,3 +806,5 @@ def cart_purchase(payment_pid,customer_id,values):          #If user presses pro
 # add_product_to_cart(3,1,2)
 # add_product_to_cart(4,1,2)
 # print(cart_price_to_be_payed(1))
+# print(display_wishlist(2))
+# print(buy_wishlist(4))
