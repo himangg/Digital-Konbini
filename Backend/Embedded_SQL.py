@@ -538,7 +538,7 @@ def add_to_wishlist(customer_id,product_id):
         connection.begin()
         try:
             cursor.execute("select * from wishlist_customer_product_bridge_table where customer_id=%s and product_id=%s",(customer_id,product_id))
-            if cursor.fetchall()==None:
+            if cursor.fetchall()==tuple():
                 cursor.execute("insert into wishlist_customer_product_bridge_table(customer_id,product_id) values(%s,%s)",(customer_id,product_id))
                 connection.commit()
             connection.close()
