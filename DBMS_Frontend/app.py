@@ -284,6 +284,7 @@ def checkout():
     print(session.get('current_user_id'))
     print(result)
     if(result == 'Quantity_Error'):
+        print("xd")
         return redirect(url_for('view_cart'))
     else:
         session['values'] = result[1]
