@@ -148,6 +148,42 @@ def update_admin_details():
             return "Update Failed"
     return render_template('update_admin_details.html')
 
+@app.route('/add_coupon',methods=['GET','POST'])
+def add_coupon():
+    if request.method=='POST':
+        code=request.form['code']
+        flat_discount=request.form['flat_discount']
+        min_cart=request.form['min_cart']
+        admin_id=session.get('current_user_id')
+        result=backend.new_coupon(admin_id,flat_discount,min_cart,code)
+        if result == 'Success':
+            return 'Coupon added successfully!'
+        else:
+            return 'Addition Failed'
+    else:
+        return render_template('add_coupon.html')
+    
+@app.route('/view_coupons')
+def view_coupons():
+    result= backend.view_coupons()
+    print(result)
+    return render_template('view_coupons.html',coupons=result)
+
+@app.route('/delete_coupon',methods=['POST'])
+def delete_coupon():
+    if request.method == 'POST':
+        coupon_code=request.form['coupon_code']
+        result=backend.delete_coupon(coupon_code)
+        print(result)
+        return "Coupon removed Successfully!"
+
+    if request.method == 'POST':
+        print("remove from cart")
+        product_id = request.form['product_id']
+        current_user_id = session.get('current_user_id')
+        result=backend.remove_product_from_cart(product_id,current_user_id)
+        print(result)
+        return "Product removed from cart successfully!"
 
 @app.route('/view_customers')
 def view_customers():
@@ -169,11 +205,6 @@ def selling_report():
 def view_orders_summary():
     result=backend.display_all_orders_summary_format()
     return render_template('view_orders_summary.html', orders_summary=result)
-
-# @app.route('/view_products')
-# def view_products():
-#     result=backend.product_search()
-#     return render_template('view_products.html', products=result)
 
 @app.route('/view_products')
 def view_products():
