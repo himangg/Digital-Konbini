@@ -299,6 +299,23 @@ def new_coupon(admin_id,flat_discount,min_cart_value,code):
             connection.close()
             return e
 
+def view_coupons():
+    '''
+    Returns a list containing (code,flat_discount,min_cart_value) pairs.
+    Else returns error string
+    '''
+    connection=connectit()
+    with connection.cursor() as cursor:
+        connection.begin()
+        try:
+            cursor.execute("select code,flat_discount,minimum_cart_value from coupons")
+            results=cursor.fetchall()
+            connection.close()
+            return results
+        except Exception as e:
+            connection.close()
+            return e
+
 def display_wishlist(customer_id):
     '''
     Returns a list containing (Product_ID,Product name, product category, Sale Price) pairs.
@@ -734,7 +751,7 @@ def cart_price_to_be_payed(customer_id):           #To fetch the total amount to
             #In case customer cancels payment at this stage call cancel_cart_purchase and enter values as parameter
         except Quantity_Error as f:
             connection.rollback()
-            cursor.execute("delete from product_order_bridge_table where product_id=%s and order_id=%s",tuple(ids_insufficient))
+            cursor.executemany("delete from product_order_bridge_table where product_id=%s and order_id=%s",tuple(ids_insufficient))
             connection.commit()
             connection.close()
             return f       #Redirect to view cart page (should generate page again so that removed products can't be seen)
@@ -809,4 +826,8 @@ def cart_purchase(payment_pid,customer_id,values):          #If user presses pro
 # print(display_wishlist(2))
 # print(buy_wishlist(4))
 # print(add_to_wishlist(2,1))
-# print(add_to_wishlist(2,1))
+# print(add_to_wishlist(10,1))
+# print(view_coupons())
+# add_product_to_cart(3,1,5)
+# print(cart_price_to_be_payed(1))
+# print(cart_price_to_be_payed(1))

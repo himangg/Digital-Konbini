@@ -827,7 +827,3 @@ def cart_purchase(payment_pid,customer_id,values):          #If user presses pro
 # print(buy_wishlist(4))
 # print(add_to_wishlist(2,1))
 # print(add_to_wishlist(10,1))
-# print(view_coupons())
-# add_product_to_cart(3,1,5)
-# print(cart_price_to_be_payed(1))
-# print(cart_price_to_be_payed(1))
