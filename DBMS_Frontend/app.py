@@ -287,7 +287,7 @@ def checkout():
         return redirect(url_for('view_cart'))
     else:
         session['values'] = result[1]
-        return render_template('checkout.html',total_price=result[0])
+        return render_template('checkout.html',total_price=result)
 
 @app.route('/confirm_checkout', methods=['POST'])
 def confirm_checkout():
