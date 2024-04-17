@@ -283,7 +283,7 @@ def checkout():
     result=backend.cart_price_to_be_payed(session.get('current_user_id'))
     print(session.get('current_user_id'))
     print(result)
-    if(result == 'Quantity_Error'):
+    if(result=='Quantity_Error'):
         print("xd")
         return redirect(url_for('view_cart'))
     else:

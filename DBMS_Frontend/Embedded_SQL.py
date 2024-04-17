@@ -754,7 +754,7 @@ def cart_price_to_be_payed(customer_id):           #To fetch the total amount to
             cursor.executemany("delete from product_order_bridge_table where product_id=%s and order_id=%s",tuple(ids_insufficient))
             connection.commit()
             connection.close()
-            return f       #Redirect to view cart page (should generate page again so that removed products can't be seen)
+            return "Quantity_Error"       #Redirect to view cart page (should generate page again so that removed products can't be seen)
         except Exception as e:
             connection.rollback()
             connection.close()
