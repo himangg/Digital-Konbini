@@ -392,8 +392,10 @@ def add_product_to_cart(product_id,customer_id,quantity=1):
                 cursor.execute("insert into orders(Customer_ID) values (%s)",customer_id)
                 cursor.execute("select order_id from orders where customer_id=%s and payment_date is null",customer_id)
                 cart_id=cursor.fetchone()[0]
+            cursor.execute("lock tables product write, product as p read")
             cursor.execute("select quantity_remaining from product where product_id=%s",product_id)
             qty_rem=cursor.fetchone()[0]
+            cursor.execute("unlock tables")
             cursor.execute("select * from product_order_bridge_table where order_id=%s and product_id=%s",(cart_id,product_id))
             result=cursor.fetchall()
             if len(result)!=0:
@@ -731,6 +733,7 @@ def cart_price_to_be_payed(customer_id):           #To fetch the total amount to
             cursor.execute("select quantity, product_id from product_order_bridge_table where order_id=%s",cart_id)
             values=cursor.fetchall()
             ids=tuple([x[1] for x in values])
+            cursor.execute("lock tables product write, product as p read")
             cursor.executemany("update product set quantity_remaining=quantity_remaining - %s where product_id=%s",values)
             cursor.executemany("select quantity_remaining from product where product_id=%s",ids)
             qty_rems=cursor.fetchall()
@@ -741,22 +744,26 @@ def cart_price_to_be_payed(customer_id):           #To fetch the total amount to
             if len(ids_insufficient)!=0:
                 raise Quantity_Error("Quantity_Error")
 
+            connection.commit()
+            cursor.execute("unlock tables")
+
             if coupon_code==None:
                 cursor.execute("select sum(price*(100-discount_percentage)/100*quantity) from product p1, product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",cart_id)
             else:
                 cursor.execute("select sum(price*(100-discount_percentage)/100*quantity)-(select flat_discount from coupons where code=%s) from product p1, product_order_bridge_table p2 where p1.product_id=p2.product_id and order_id=%s",(coupon_code,cart_id))
-            connection.commit()
             connection.close()
             return cursor.fetchone()[0],values,coupon_code          #First value is total price. 2nd value is to be held.
             #In case customer cancels payment at this stage call cancel_cart_purchase and enter values as parameter
         except Quantity_Error as f:
             connection.rollback()
+            cursor.execute("unlock tables")
             cursor.executemany("delete from product_order_bridge_table where product_id=%s and order_id=%s",tuple(ids_insufficient))
             connection.commit()
             connection.close()
             return "Quantity_Error"       #Redirect to view cart page (should generate page again so that removed products can't be seen)
         except Exception as e:
             connection.rollback()
+            cursor.execute("unlock tables")
             connection.close()
             return e
 
@@ -770,12 +777,15 @@ def cancel_cart_purchase(values):           #If user presses cancel button on pu
     with connection.cursor() as cursor:
         connection.begin()
         try:
+            cursor.execute("lock tables product write, product as p read")
             cursor.executemany("update product set quantity_remaining=quantity_remaining+%s where product_id=%s",values)
             connection.commit()
+            cursor.execute("unlock tables")
             connection.close()
             return "Success"
         except Exception as e:
             connection.rollback()
+            cursor.execute("unlock tables")
             connection.close()
             return e
 
@@ -831,3 +841,4 @@ def cart_purchase(payment_pid,customer_id,values):          #If user presses pro
 # add_product_to_cart(3,1,5)
 # print(cart_price_to_be_payed(1))
 # print(cart_price_to_be_payed(1))
+# print(add_product_to_cart(1,1,1))
