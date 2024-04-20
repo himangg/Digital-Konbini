@@ -1,10 +1,13 @@
 from flask import Flask, jsonify, render_template,redirect,url_for, request, session
 import json
 import Embedded_SQL as backend
-from flask import redirect
-from flask import url_for
+from flask_session import Session
 
 app = Flask(__name__)
+app.config['SESSION_TYPE'] = 'filesystem'
+app.secret_key = 'himang'
+Session(app)
+
 def parse_json(value):
     return json.loads(value)
 
@@ -65,7 +68,7 @@ def register_supplier():
 
 @app.route('/login_customer', methods=['POST'])
 def login_customer():
-    global current_user_id
+    # global current_user_id
     if request.method == 'POST':
         phone = request.form['phone']
         password = request.form['password']
@@ -86,7 +89,7 @@ def customer_home():
     
 @app.route('/login_supplier', methods=['POST'])
 def login_supplier():
-    global current_user_id
+    # global current_user_id
     if request.method == 'POST':
         phoneORemail = request.form['phoneORemail']
         password = request.form['password']
@@ -112,7 +115,7 @@ def supplier_home():
 
 @app.route('/login_admin', methods=['POST'])
 def login_admin():
-    global current_user_id
+    # global current_user_id
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
