@@ -773,6 +773,7 @@ def cancel_cart_purchase(values):           #If user presses cancel button on pu
     'Success' if correct
     Else returns error string
     '''
+    print(values)
     connection=connectit()
     with connection.cursor() as cursor:
         connection.begin()
@@ -842,3 +843,35 @@ def cart_purchase(payment_pid,customer_id,values):          #If user presses pro
 # print(cart_price_to_be_payed(1))
 # print(cart_price_to_be_payed(1))
 # print(add_product_to_cart(1,1,1))
+
+# register_customer(1,1,1,1)
+# register_customer(2,2,2,2)
+# register_customer(3,3,3,3)
+
+def conflict1(a,result):
+    result.append(cart_price_to_be_payed(a))
+
+if __name__ == '__main__':
+    import multiprocessing
+    
+    with multiprocessing.Manager() as manager:
+        result = manager.list()
+
+        p1 = multiprocessing.Process(target=conflict1, args=(52,result))
+        p2 = multiprocessing.Process(target=conflict1, args=(51,result))
+
+        p1.start()
+        p2.start()
+        p1.join()
+        p2.join()
+        print(result)
+        
+        print(result[0][1] if (result[1]=="Quantity_Error" or result[1][1]==tuple()) else result[1][1])
+        p3 = multiprocessing.Process(target=cancel_cart_purchase, args=((result[0][1] if (result[1]=="Quantity_Error" or result[1][1]==tuple()) else result[1][1]),))
+        p4 = multiprocessing.Process(target=conflict1, args=(53,result))
+        p3.start()
+        p4.start()
+        p3.join()
+        p4.join()
+        if result[2]!="Quantity_Error":
+            print(cart_purchase(1011112,53,tuple()))
